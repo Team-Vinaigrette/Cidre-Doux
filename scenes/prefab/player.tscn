@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://2r0he64xy20p"]
+[gd_scene load_steps=4 format=3 uid="uid://2r0he64xy20p"]
 
 [ext_resource type="SpriteFrames" uid="uid://yhij4mn5pmqh" path="res://sprites/player/player.tres" id="1_gfxbk"]
+[ext_resource type="Script" path="res://scripts/scenes/prefab/Player.cs" id="1_vhc7p"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eieor"]
 size = Vector2(26, 25)
 
 [node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_vhc7p")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("1_gfxbk")
