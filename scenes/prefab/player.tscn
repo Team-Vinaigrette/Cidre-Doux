@@ -6,12 +6,14 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eieor"]
 size = Vector2(26, 25)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Sprite")]
 script = ExtResource("1_vhc7p")
+Speed = 128.0
+Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("1_gfxbk")
-animation = &"idle-down"
+animation = &"walk-down"
 
 [node name="Collider" type="CollisionShape2D" parent="."]
 position = Vector2(0, 19.5)
