@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://2r0he64xy20p"]
+
+[ext_resource type="SpriteFrames" uid="uid://yhij4mn5pmqh" path="res://sprites/player/player.tres" id="1_gfxbk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eieor"]
+size = Vector2(26, 25)
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_gfxbk")
+animation = &"idle-down"
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+position = Vector2(0, 19.5)
+shape = SubResource("RectangleShape2D_eieor")

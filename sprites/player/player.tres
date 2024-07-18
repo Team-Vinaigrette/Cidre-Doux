@@ -1,0 +1,19 @@
+[gd_resource type="SpriteFrames" load_steps=3 format=3 uid="uid://yhij4mn5pmqh"]
+
+[ext_resource type="Texture2D" uid="uid://dehtlnsr7f6e7" path="res://sprites/player/source/modern2.png" id="1_wsau0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_341x8"]
+atlas = ExtResource("1_wsau0")
+region = Rect2(460, 256, 46, 64)
+
+[resource]
+resource_name = "Player Sprite"
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_341x8")
+}],
+"loop": true,
+"name": &"idle-down",
+"speed": 5.0
+}]
