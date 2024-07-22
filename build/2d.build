@@ -1,0 +1,32 @@
+{
+	"disabled_build_options": {
+		"brotli": false,
+		"disable_3d": true,
+		"disable_3d_physics": true,
+		"graphite": false,
+		"module_msdfgen_enabled": false,
+		"openxr": false
+	},
+	"disabled_classes": [
+		"AnimationMixer",
+		"AudioStreamPlayer",
+		"BoneMap",
+		"CryptoKey",
+		"Node3D",
+		"Occluder3D",
+		"OpenXRAction",
+		"OpenXRActionMap",
+		"OpenXRActionSet",
+		"OpenXRIPBinding",
+		"OpenXRInteractionProfile",
+		"PhysicsMaterial",
+		"ShaderGlobalsOverride",
+		"Shape3D",
+		"SkeletonIK3D",
+		"VideoStream",
+		"VideoStreamPlayback",
+		"World3D",
+		"X509Certificate"
+	],
+	"type": "build_profile"
+}

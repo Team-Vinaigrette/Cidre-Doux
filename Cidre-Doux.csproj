@@ -5,5 +5,12 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'ios' ">net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CidreDoux</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="scenes\levels\debug\debug-1.tscn" />
+    <Content Include="scenes\levels\debug\debug-2.tscn" />
+    <Content Include="scenes\main.tscn" />
+    <Content Include="scenes\prefabs\camera.tscn" />
+  </ItemGroup>
 </Project>

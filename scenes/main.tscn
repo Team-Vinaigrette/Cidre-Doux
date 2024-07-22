@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://c67uei2a88tb"]
+
+[ext_resource type="PackedScene" uid="uid://dqd6hae7rurji" path="res://scenes/prefabs/camera.tscn" id="1_ei3st"]
+[ext_resource type="Script" path="res://scripts/Main.cs" id="1_n2x6t"]
+[ext_resource type="Script" path="res://scripts/lib/LevelManager.cs" id="2_2wybx"]
+[ext_resource type="PackedScene" uid="uid://c7g03kltumnow" path="res://scenes/levels/debug/debug-1.tscn" id="2_ldewi"]
+
+[node name="Main" type="Node" node_paths=PackedStringArray("LevelRoot")]
+script = ExtResource("1_n2x6t")
+LevelRoot = NodePath("Level Root")
+
+[node name="Level Root" type="Node" parent="."]
+script = ExtResource("2_2wybx")
+
+[node name="Debug" parent="Level Root" instance=ExtResource("2_ldewi")]
+
+[node name="Camera" parent="." instance=ExtResource("1_ei3st")]
