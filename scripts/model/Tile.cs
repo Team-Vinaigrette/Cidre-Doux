@@ -1,6 +1,8 @@
 using Godot;
 using System;
 
+namespace CidreDoux.scripts.model;
+
 public enum BackgroundType
 {
     Grass,

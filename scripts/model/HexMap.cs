@@ -2,6 +2,8 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+namespace CidreDoux.scripts.model;
+
 public partial class HexMap : GodotObject
 {
     Dictionary<Tuple<int, int>, Tile> map;
