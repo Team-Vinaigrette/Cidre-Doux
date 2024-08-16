@@ -1,0 +1,9 @@
+# Ignore the VCS folder.
+.git
+
+# Ignore the IDE configuration folders.
+.vscode
+.idea
+
+# Ignore the addons folder.
+addons
