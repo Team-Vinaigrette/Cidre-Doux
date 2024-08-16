@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bxgob80cwgb06"]
+
+[ext_resource type="Shader" path="res://materials/debug/shaders/tile.gdshader" id="1_bqmy4"]
+
+[resource]
+shader = ExtResource("1_bqmy4")
+shader_parameter/tile_color = Vector4(1, 1, 1, 1)
