@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Godot.NET.Sdk/4.3.0">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,4 +7,11 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CidreDoux</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="scripts\model\Tile.cs" />
+    <Content Include="scripts\model\HexMap.cs" />
+    <Content Include="Cidre Doux.sln" />
+    <Content Include="project.godot" />
+    <Content Include="scripts\InitTest.cs" />
+  </ItemGroup>
 </Project>
