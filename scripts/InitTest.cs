@@ -45,8 +45,8 @@ public partial class InitTest : Node2D
 			} while (currentTile.ComputeCrossingCost() < 0);
 
 			dynamicPath.Add(currentTile);
-			GD.Print($"[{currentTile.X},{currentTile.Y} ({currentTile.ComputeCrossingCost()})]");
-			sequence += $" -> [{currentTile.X},{currentTile.Y} ({currentTile.ComputeCrossingCost()})]";
+			GD.Print($"[{currentTile.Col},{currentTile.Row} ({currentTile.ComputeCrossingCost()})]");
+			sequence += $" -> [{currentTile.Col},{currentTile.Row} ({currentTile.ComputeCrossingCost()})]";
 		}
 		
 		GD.Print(sequence);

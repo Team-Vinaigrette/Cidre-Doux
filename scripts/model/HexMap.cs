@@ -56,16 +56,16 @@ public class HexMap
     public List<Tile> GetNeighbors(Tile tile)
     {
         // Avoid getting out of map bounds
-        if(Size == Mathf.Abs(tile.X) || Size == Mathf.Abs(tile.Y)) this.Grow();
+        if(Size == Mathf.Abs(tile.Col) || Size == Mathf.Abs(tile.Row)) this.Grow();
         
-        int rowOffset = Mathf.Abs(tile.Y % 2);
+        int rowOffset = Mathf.Abs(tile.Row % 2);
         List<Tile> neighbors = new List<Tile>();
-        neighbors.Add(GetTile(tile.X - 1, tile.Y));
-        neighbors.Add(GetTile(tile.X -1 + rowOffset, tile.Y - 1));
-        neighbors.Add(GetTile(tile.X + rowOffset, tile.Y - 1));
-        neighbors.Add(GetTile(tile.X + 1, tile.Y));
-        neighbors.Add(GetTile(tile.X + rowOffset, tile.Y + 1));
-        neighbors.Add(GetTile(tile.X -1 + rowOffset, tile.Y + 1));
+        neighbors.Add(GetTile(tile.Col - 1, tile.Row));
+        neighbors.Add(GetTile(tile.Col -1 + rowOffset, tile.Row - 1));
+        neighbors.Add(GetTile(tile.Col + rowOffset, tile.Row - 1));
+        neighbors.Add(GetTile(tile.Col + 1, tile.Row));
+        neighbors.Add(GetTile(tile.Col + rowOffset, tile.Row + 1));
+        neighbors.Add(GetTile(tile.Col -1 + rowOffset, tile.Row + 1));
         return neighbors;
     }
     

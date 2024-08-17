@@ -37,23 +37,23 @@ public class Tile
     public readonly BackgroundType Background;
     public Building Building { get; private set; }
     public static readonly Array BgValues = Enum.GetValues(typeof(BackgroundType));
-    public readonly int X, Y;
+    public readonly int Col, Row;
     public readonly HexMap ParentMap;
 
-    public Tile(int x, int y, BackgroundType bg, HexMap map){
+    public Tile(int col, int row, BackgroundType bg, HexMap map){
         Background = bg;
         Building = null;
-        X = x;
-        Y = y;
+        Col = col;
+        Row = row;
         ParentMap = map;
     }
 
     public override String ToString() {
-        return $"Tile[{X},{Y}]<{Background}, {Building}>";
+        return $"Tile[{Col},{Row}]<{Background}, {Building}>";
     }
     
     public String ToStringMap() {
-        return "<" + X + ":" + Y + ">";
+        return "<" + Col + ":" + Row + ">";
         return "<" + Background.ToString().Substring(0, 2) + ":" + 
                (Building is not null ? Building.Type.ToString().Substring(0,2) : "  ") + ">";
     }
@@ -71,19 +71,19 @@ public class Tile
             return false;
         }
 
-        Tuple<int, int> relPos = Tuple.Create(X - tile.X, Y - tile.Y);
-        return (Mathf.Abs(Y % 2) == 0) ? relativeOddNeighbors.Contains(relPos) : relativeEvenNeighbors.Contains(relPos);
+        Tuple<int, int> relPos = Tuple.Create(Col - tile.Col, Row - tile.Row);
+        return (Mathf.Abs(Row % 2) == 0) ? relativeOddNeighbors.Contains(relPos) : relativeEvenNeighbors.Contains(relPos);
     }
     
     public void Build(BuildingType buildingType)
     {
         if (Building is not null)
         {
-            GD.Print($"Error: Tile {X}:{Y} already has a building: ${Building}");
+            GD.Print($"Error: Tile {Col}:{Row} already has a building: ${Building}");
         }
         else
         {
-            GD.Print($"<{X}:{Y}> Building: {Building}");
+            GD.Print($"<{Col}:{Row}> Building: {buildingType}");
             Building = Building.NewBuilding(buildingType);
         }
     }
@@ -92,7 +92,7 @@ public class Tile
     {
         if (Building is null)
         {
-            GD.Print($"Error: Tile {X}:{Y} cannot consume {ressource} because it is empty");
+            GD.Print($"Error: Tile {Col}:{Row} cannot consume {ressource} because it is empty");
         }
         else
         {

@@ -1,15 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CidreDoux.scripts.model;
+using CidreDoux.scripts.view;
 using Godot;
-using Tile = CidreDoux.scripts.view.Tile;
 
 namespace CidreDoux.scripts;
 
 public partial class World : Node2D
 {
     /// <summary>
-    /// The packed scene used to instantiate <see cref="view.Tile"/> objects.
+    /// The packed scene used to instantiate <see cref="ViewTile"/> objects.
     /// </summary>
     [Export, MaybeNull] public PackedScene TileScene;
 
@@ -49,26 +50,21 @@ public partial class World : Node2D
             return;
         }
 
-        // Generate a list of NxM tiles.
-        for (var i = -Width; i <= Width; i++)
+        HexMap map = new HexMap(Width);
+
+        foreach(Tile tile in map.Map.Values)
         {
-            for (var j = -Height; j <= Height; j++)
-            {
-                // Create a new model for the tile.
-                var model = new model.Tile(i, j, BackgroundType.Grass);
-
-                // Instantiate a new tile.
-                var tile = TileScene.Instantiate<Tile>();
-                tile.Name = $"Tile ({i}, {j})";
-                tile.Model = model;
-                tile.World = this;
-
-                // Attach the tile to the world.
-                AddChild(tile);
-
-                // Set the position of the tile.
-                tile.Position = Tile.GetHexagonCenterWorldPosition(i, j);
-            }
+            // Instantiate a new tile.
+            var viewTile = TileScene.Instantiate<ViewTile>();
+            viewTile.Name = $"Tile ({tile.Col}, {tile.Row})";
+            viewTile.Model = tile;
+            viewTile.World = this;
+        
+            // Attach the tile to the world.
+            AddChild(viewTile);
+        
+            // Set the position of the tile.
+            viewTile.Position = ViewTile.GetHexagonCenterWorldPosition(tile.Col, tile.Row);
         }
     }
 
@@ -87,7 +83,7 @@ public partial class World : Node2D
         var worldPosition = viewport.GetMousePosition() - GetViewportRect().Size / 2 + Camera.Position;
 
         // Update the location of the hovered tile.
-        SelectedTile = Tile.GetHexagonMapCoordinates(Tile.FindClosestHexCenter(worldPosition));
+        SelectedTile = ViewTile.GetHexagonMapCoordinates(ViewTile.FindClosestHexCenter(worldPosition));
 
         // Send a "hover changed" event.
         EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Item1, SelectedTile.Item2);
