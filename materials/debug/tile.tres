@@ -4,4 +4,3 @@
 
 [resource]
 shader = ExtResource("1_bqmy4")
-shader_parameter/tile_color = Vector4(1, 1, 1, 1)

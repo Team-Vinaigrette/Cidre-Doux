@@ -1,17 +1,45 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using CidreDoux.scripts.view;
+using CidreDoux.scripts.model;
 using Godot;
+using Tile = CidreDoux.scripts.view.Tile;
 
 namespace CidreDoux.scripts;
 
 public partial class World : Node2D
 {
+    /// <summary>
+    /// The packed scene used to instantiate <see cref="view.Tile"/> objects.
+    /// </summary>
     [Export, MaybeNull] public PackedScene TileScene;
+
+    /// <summary>
+    /// The number of tiles to render horizontally.
+    /// </summary>
     [Export] public int Width = 10;
+
+    /// <summary>
+    /// The number of tiles to render vertically.
+    /// </summary>
     [Export] public int Height = 10;
 
-    // Called when the node enters the scene tree for the first time.
+    /// <summary>
+    /// The camera that is currently active in the world.
+    /// </summary>
+    [Export, MaybeNull] public Camera2D Camera;
+
+    /// <summary>
+    /// Signal emitted when the selected tile is changed.
+    /// </summary>
+    [Signal]
+    public delegate void OnSelectedTileChangeEventHandler(int column, int row);
+
+    /// <summary>
+    /// The currently selected tile.
+    /// </summary>
+    public Tuple<int, int> SelectedTile { get; private set; }
+
+    /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
     {
         // Check if the tile scene was set.
@@ -26,15 +54,14 @@ public partial class World : Node2D
         {
             for (var j = -Height; j <= Height; j++)
             {
+                // Create a new model for the tile.
+                var model = new model.Tile(i, j, BackgroundType.Grass);
+
                 // Instantiate a new tile.
                 var tile = TileScene.Instantiate<Tile>();
                 tile.Name = $"Tile ({i}, {j})";
-
-                // Create a colour based on the distance to the center.
-                var red = Math.Abs(i) / (2.0f * Width);
-                var green = Math.Abs(j) / (2.0f * Height);
-
-                tile.ChangeTileColor(new Color(red, green, 1));
+                tile.Model = model;
+                tile.World = this;
 
                 // Attach the tile to the world.
                 AddChild(tile);
@@ -45,8 +72,24 @@ public partial class World : Node2D
         }
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    /// <inheritdoc cref="Node._Process"/>
     public override void _Process(double delta)
     {
+        // Get the active camera in the scene.
+        if (Camera is null)
+        {
+            GD.PrintErr("Failed to find a camera in the current world");
+            return;
+        }
+
+        // Get the world position of the mouse cursor.
+        var viewport = GetViewport();
+        var worldPosition = viewport.GetMousePosition() - GetViewportRect().Size / 2 + Camera.Position;
+
+        // Update the location of the hovered tile.
+        SelectedTile = Tile.GetHexagonMapCoordinates(Tile.FindClosestHexCenter(worldPosition));
+
+        // Send a "hover changed" event.
+        EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Item1, SelectedTile.Item2);
     }
 }
