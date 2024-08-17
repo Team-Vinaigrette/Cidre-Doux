@@ -20,16 +20,20 @@ public enum BuildingType
     Base
 }
 
-public partial class Tile : GodotObject
+public class Tile
 {
     public BackgroundType Background;
     public BuildingType Building;
 
     public static Array BGValues = Enum.GetValues(typeof(BackgroundType));
 
-    public Tile(BackgroundType bg){
+    public readonly int _x, _y;
+
+    public Tile(int x, int y, BackgroundType bg){
         Background = bg;
         Building = BuildingType.Empty;
+        _x = x;
+        _y = y;
     }
 
     public override String ToString() {
