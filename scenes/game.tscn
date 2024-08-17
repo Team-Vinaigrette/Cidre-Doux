@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dgwoxlr0cvu0u"]
+
+[ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
+[ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
+
+[node name="Game" type="Node2D"]
+
+[node name="World" parent="." node_paths=PackedStringArray("Camera") instance=ExtResource("1_eqon8")]
+Width = 10
+Height = 10
+Camera = NodePath("../Camera2D")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="UI" parent="." instance=ExtResource("2_lxprr")]
