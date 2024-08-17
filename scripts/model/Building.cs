@@ -7,9 +7,12 @@ using Godot;
 namespace CidreDoux.scripts.model;
 public enum BuildingType
 {
+    Field,
     Farm,
     Mine,
     Sawmill,
+    Harbor,
+    Market,
     Road,
     Base
 }
@@ -141,7 +144,7 @@ public class Building
                 computer = new CrossingCostMultiplier(0.5f);
                 break;
             default:
-                GD.PrintErr("Should not have reach default statement in NewBuilding");
+                GD.PrintErr($" generator for {type} building type not yet implemented");
                 break;
         }
         return new Building(type, producer, consumers, computer);

@@ -12,8 +12,9 @@ public enum RessourceType
 {
     Wood,
     Iron,
-    Stone,
-    Food
+    Wheat,
+    Food,
+    Gold
 }
 
 public interface PackageAction
