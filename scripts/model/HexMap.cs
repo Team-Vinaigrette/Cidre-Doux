@@ -18,27 +18,27 @@ public class HexMap
         Map = new Dictionary<Tuple<int, int>, Tile>();
         for(int x = -initSize; x <= initSize; x++){
             for(int y = -initSize; y <= initSize; y++){
-                Map.Add(new Tuple<int, int>(x, y), new Tile(x, y, GetBackgroundType()));
+                Map.Add(new Tuple<int, int>(x, y), new Tile(x, y, GetBackgroundType(), this));
             }
         }
-        GetTile(0, 0).Building = BuildingType.Base;
+        GetTile(0, 0).Build(BuildingType.Base);
     }
 
     // Extends the HexMap, adding one row and one column on each side
     public void Grow() {
         for(int y = -Size; y <= Size; y++){
-            Map.Add(new Tuple<int, int>(-Size - 1, y), new Tile(-Size - 1, y, GetBackgroundType()));
-            Map.Add(new Tuple<int, int>(Size + 1, y), new Tile(Size + 1, y, GetBackgroundType()));
+            Map.Add(new Tuple<int, int>(-Size - 1, y), new Tile(-Size - 1, y, GetBackgroundType(), this));
+            Map.Add(new Tuple<int, int>(Size + 1, y), new Tile(Size + 1, y, GetBackgroundType(), this));
         }
         Size += 1;
         for(int x = -Size; x <= Size; x++){
-            Map.Add(new Tuple<int, int>(x, -Size), new Tile(x, -Size, GetBackgroundType()));
-            Map.Add(new Tuple<int, int>(x, Size), new Tile(x, Size, GetBackgroundType()));
+            Map.Add(new Tuple<int, int>(x, -Size), new Tile(x, -Size, GetBackgroundType(), this));
+            Map.Add(new Tuple<int, int>(x, Size), new Tile(x, Size, GetBackgroundType(), this));
         }
     }
 
     public BackgroundType GetBackgroundType(){
-        return (BackgroundType)Tile.BGValues.GetValue(_randomizer.Next(Tile.BGValues.Length))!;
+        return (BackgroundType)Tile.BgValues.GetValue(_randomizer.Next(Tile.BgValues.Length))!;
     }
 
     public override String ToString() {
@@ -53,13 +53,29 @@ public class HexMap
         return Map[Tuple.Create(col, row)];
     }
 
+    public List<Tile> GetNeighbors(Tile tile)
+    {
+        // Avoid getting out of map bounds
+        if(Size == Mathf.Abs(tile.X) || Size == Mathf.Abs(tile.Y)) this.Grow();
+        
+        int rowOffset = Mathf.Abs(tile.Y % 2);
+        List<Tile> neighbors = new List<Tile>();
+        neighbors.Add(GetTile(tile.X - 1, tile.Y));
+        neighbors.Add(GetTile(tile.X -1 + rowOffset, tile.Y - 1));
+        neighbors.Add(GetTile(tile.X + rowOffset, tile.Y - 1));
+        neighbors.Add(GetTile(tile.X + 1, tile.Y));
+        neighbors.Add(GetTile(tile.X + rowOffset, tile.Y + 1));
+        neighbors.Add(GetTile(tile.X -1 + rowOffset, tile.Y + 1));
+        return neighbors;
+    }
+    
     public String ToStringMap() {
         String res = "";
-        for(int col = -Size; col <= Size; col++){
-            if(col % 2 != Size % 2){
-                res += "    ";
+        for(int row = -Size; row <= Size; row++){
+            if(row % 2 != 0){
+                res += "   ";
             }
-            for(int row = -Size; row <= Size; row ++){
+            for(int col = -Size; col <= Size; col ++){
                 res += GetTile(col, row).ToStringMap() + " ";
             }
             res += "\n";
