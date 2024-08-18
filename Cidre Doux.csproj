@@ -6,4 +6,10 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CidreDoux</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="scripts\controller\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="scripts\controller\**" />
+  </ItemGroup>
 </Project>

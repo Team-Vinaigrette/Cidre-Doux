@@ -7,6 +7,14 @@ using Godot;
 
 namespace CidreDoux.scripts;
 
+public enum GameState
+{
+    Idle,
+    Build,
+    AssignPath,
+    TurnEnd,
+}
+
 public partial class World : Node2D
 {
     /// <summary>
@@ -35,10 +43,13 @@ public partial class World : Node2D
     [Signal]
     public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
+    public GameState CurrentState { get; private set; }
+    
     /// <summary>
     /// The currently selected tile.
     /// </summary>
-    public Tuple<int, int> SelectedTile { get; private set; }
+    public Tuple<int, int> HoveredTile { get; private set; }
+    public Tuple<int, int> ActiveTile { get; private set; }
 
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
@@ -83,9 +94,9 @@ public partial class World : Node2D
         var worldPosition = viewport.GetMousePosition() - GetViewportRect().Size / 2 + Camera.Position;
 
         // Update the location of the hovered tile.
-        SelectedTile = ViewTile.GetHexagonMapCoordinates(ViewTile.FindClosestHexCenter(worldPosition));
+        HoveredTile = ViewTile.GetHexagonMapCoordinates(ViewTile.FindClosestHexCenter(worldPosition));
 
         // Send a "hover changed" event.
-        EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Item1, SelectedTile.Item2);
+        EmitSignal(SignalName.OnSelectedTileChange, HoveredTile.Item1, HoveredTile.Item2);
     }
 }
