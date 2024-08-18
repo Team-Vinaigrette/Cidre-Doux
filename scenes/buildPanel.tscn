@@ -1,0 +1,45 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfywxgi155v3k"]
+
+[ext_resource type="PackedScene" uid="uid://qb4burus8olj" path="res://scenes/builder.tscn" id="1_3vned"]
+[ext_resource type="Script" path="res://scripts/view/BuildPanel.cs" id="1_4wdcu"]
+
+[node name="BuildPanel" type="Node2D"]
+script = ExtResource("1_4wdcu")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.838502, 0.697598, 0.748888, 1)
+polygon = PackedVector2Array(0, 0, 600, 0, 600, 200, 0, 200)
+
+[node name="Builder" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(12, 9)
+scale = Vector2(0.2, 0.2)
+
+[node name="Builder2" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(109, 9)
+scale = Vector2(0.2, 0.2)
+BuildingType = 1
+
+[node name="Builder3" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(211, 9)
+scale = Vector2(0.2, 0.2)
+BuildingType = 2
+
+[node name="Builder4" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(306, 9)
+scale = Vector2(0.2, 0.2)
+BuildingType = 3
+
+[node name="Builder5" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(406, 9)
+scale = Vector2(0.2, 0.2)
+BuildingType = 4
+
+[node name="Builder6" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(506, 9)
+scale = Vector2(0.2, 0.2)
+BuildingType = 5
+
+[node name="Builder7" parent="." instance=ExtResource("1_3vned")]
+position = Vector2(13, 105)
+scale = Vector2(0.2, 0.2)
+BuildingType = 6

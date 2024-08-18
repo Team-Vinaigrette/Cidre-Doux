@@ -1,12 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://dgwoxlr0cvu0u"]
+[gd_scene load_steps=5 format=3 uid="uid://dgwoxlr0cvu0u"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
-[ext_resource type="Script" path="res://scripts/view/UiBuilding.cs" id="3_te1mi"]
+[ext_resource type="PackedScene" uid="uid://qb4burus8olj" path="res://scenes/builder.tscn" id="3_6mmq7"]
+[ext_resource type="PackedScene" uid="uid://dfywxgi155v3k" path="res://scenes/buildPanel.tscn" id="4_q00aa"]
 
 [node name="Game" type="Node2D"]
-
-[node name="UI" parent="." instance=ExtResource("2_lxprr")]
 
 [node name="World" parent="." node_paths=PackedStringArray("Camera") instance=ExtResource("1_eqon8")]
 Width = 10
@@ -15,19 +14,13 @@ Camera = NodePath("../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="ColorRect" type="ColorRect" parent="."]
-z_index = 1
-offset_left = 4.0
-offset_top = -75.0
-offset_right = 44.0
-offset_bottom = -35.0
-script = ExtResource("3_te1mi")
-BuildingType = 1
+[node name="Builder2" parent="." node_paths=PackedStringArray("MyWorld") instance=ExtResource("3_6mmq7")]
+position = Vector2(-508, -154)
+scale = Vector2(0.3, 0.3)
+MyWorld = NodePath("../World")
+BuildingType = 2
 
-[node name="ColorRect2" type="ColorRect" parent="."]
-z_index = 1
-offset_left = 106.0
-offset_top = 57.0
-offset_right = 220.0
-offset_bottom = 150.0
-color = Color(0.207843, 1, 1, 1)
+[node name="UI" parent="." instance=ExtResource("2_lxprr")]
+
+[node name="BuildPanel" parent="UI" node_paths=PackedStringArray("World") instance=ExtResource("4_q00aa")]
+World = NodePath("../../World")

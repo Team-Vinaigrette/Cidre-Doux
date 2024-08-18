@@ -49,14 +49,16 @@ public class HexMap
         return res;
     }
 
-    public Tile GetTile(int col, int row){
-        return Map[Tuple.Create(col, row)];
+    public Tile GetTile(int col, int row)
+    {
+        Map.TryGetValue(Tuple.Create(col, row), out var res);
+        return res;
     }
 
     public List<Tile> GetNeighbors(Tile tile)
     {
         // Avoid getting out of map bounds
-        if(Size == Mathf.Abs(tile.Col) || Size == Mathf.Abs(tile.Row)) this.Grow();
+        //if(Size == Mathf.Abs(tile.Col) || Size == Mathf.Abs(tile.Row)) this.Grow();
         
         int rowOffset = Mathf.Abs(tile.Row % 2);
         List<Tile> neighbors = new List<Tile>();
@@ -66,6 +68,7 @@ public class HexMap
         neighbors.Add(GetTile(tile.Col + 1, tile.Row));
         neighbors.Add(GetTile(tile.Col + rowOffset, tile.Row + 1));
         neighbors.Add(GetTile(tile.Col -1 + rowOffset, tile.Row + 1));
+        neighbors.RemoveAll(item => item is null);
         return neighbors;
     }
     

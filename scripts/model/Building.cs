@@ -145,7 +145,7 @@ public class Building
                 break;
             default:
                 GD.PrintErr($" generator for {type} building type not yet implemented");
-                break;
+                return null;
         }
         return new Building(type, producer, consumers, computer);
     }

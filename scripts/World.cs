@@ -44,13 +44,24 @@ public partial class World : Node2D
     public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
     public GameState CurrentState { get; private set; }
+
+    public void ChangeState(GameState newState)
+    {
+        CurrentState = newState;
+    }
     
     /// <summary>
     /// The currently selected tile.
     /// </summary>
     public Tuple<int, int> HoveredTile { get; private set; }
     public Tuple<int, int> ActiveTile { get; private set; }
-
+    private HexMap _map;
+    public void RequestBuild(BuildingType type)
+    {
+        var tile = _map.GetTile(HoveredTile.Item1, HoveredTile.Item2);
+        tile.Build(type);
+    }
+    
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
     {
@@ -61,9 +72,9 @@ public partial class World : Node2D
             return;
         }
 
-        HexMap map = new HexMap(Width);
+        _map = new HexMap(4);
 
-        foreach(Tile tile in map.Map.Values)
+        foreach(Tile tile in _map.Map.Values)
         {
             // Instantiate a new tile.
             var viewTile = TileScene.Instantiate<ViewTile>();
@@ -77,6 +88,15 @@ public partial class World : Node2D
             // Set the position of the tile.
             viewTile.Position = ViewTile.GetHexagonCenterWorldPosition(tile.Col, tile.Row);
         }
+
+        GD.Print(_map.ToStringMap());
+        
+        var path = _map.GetTile(0, 0).AStar(_map.GetTile(0, 1));
+        path = _map.GetTile(0, 0).AStar(_map.GetTile(3, 3));
+        path = _map.GetTile(3, 3).AStar(_map.GetTile(0, 0));
+        
+        
+        GD.Print("out");
     }
 
     /// <inheritdoc cref="Node._Process"/>

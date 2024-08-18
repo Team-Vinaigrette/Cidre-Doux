@@ -74,12 +74,17 @@ public class Tile
         Tuple<int, int> relPos = Tuple.Create(Col - tile.Col, Row - tile.Row);
         return (Mathf.Abs(Row % 2) == 0) ? relativeOddNeighbors.Contains(relPos) : relativeEvenNeighbors.Contains(relPos);
     }
+
+    public bool HasBuilding()
+    {
+        return Building is not null;
+    }
     
     public void Build(BuildingType buildingType)
     {
-        if (Building is not null)
+        if (HasBuilding())
         {
-            GD.Print($"Error: Tile {Col}:{Row} already has a building: ${Building}");
+            GD.Print($"Error: Tile {Col}:{Row} already has a building: ${this.Building.Type}");
         }
         else
         {
@@ -114,5 +119,80 @@ public class Tile
     public void NextTurn()
     {
         Building.NextTurn();
+    }
+
+    private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom)
+    {
+        var current = this;
+        var res = new Stack<Tile>();
+        res.Push(current);
+        while(cameFrom.ContainsKey(current))
+        {
+            current = cameFrom[current];
+            res.Push(current);
+        }
+        
+        return new List<Tile>(res);
+    }
+
+    private int ManhattanDist(Tile goal)
+    {
+        var dx = goal.Col - this.Col;
+        var dy = goal.Row - this.Row;
+
+        if (Mathf.Sign(dx) == Mathf.Sign(dy))
+        {
+            return Mathf.Abs(dx + dy);
+        }
+        else
+        {
+            return Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        }
+    }
+    
+    public List<Tile> AStar(Tile goal)
+    {
+        if (goal.ParentMap != ParentMap)
+        {
+            GD.PrintErr("Attempted to call AStar on two tiles from different maps");
+            return null;
+        }
+
+        var openSet = new List<Tile> { this };
+
+        var cameFrom = new Dictionary<Tile, Tile>();
+
+        var gScores = new Dictionary<Tile, int> { { this, 0 } };
+
+        var fScores = new Dictionary<Tile, int>{{this, this.ManhattanDist(goal)}};
+
+        while (openSet.Count > 0)
+        {
+            openSet.Sort((x, y) => fScores[x].CompareTo(fScores[y]));
+            var current = openSet[0];
+            if (current == goal) return goal.ReconstructPath(cameFrom);
+
+            openSet.Remove(current);
+            foreach (var neighbor in current.GetNeighbors())
+            {
+                // Cost of entering last tile is always 1 turn
+                var crossingCost = neighbor == goal ? ModelParameters.DefaultPackageSpeed : neighbor.ComputeCrossingCost();
+                if(crossingCost < 0) continue;
+                
+                int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;
+                int neighborGScore = gScores.ContainsKey(neighbor) ? gScores[neighbor] : int.MaxValue;
+                int tentativeGScore = (currentGScore + crossingCost);
+                if (tentativeGScore < neighborGScore)
+                {
+                    cameFrom[neighbor] = current;
+                    gScores[neighbor] = tentativeGScore;
+                    fScores[neighbor] = tentativeGScore + this.ManhattanDist(goal);
+                    if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
+                }
+            }
+        }
+        
+        GD.Print($"AStar found no path from {this} to {goal}");
+        return null;
     }
 }

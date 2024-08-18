@@ -82,7 +82,13 @@ public partial class ViewTile : Node2D
         // Check if the tile was selected.
         if (Model.Col == column && Model.Row == row)
         {
-            ChangeTileColor(Colors.RebeccaPurple);
+            if (World.CurrentState == GameState.Build && Model.HasBuilding()){
+                ChangeTileColor(Colors.Red);
+            }
+            else
+            {
+                ChangeTileColor(Colors.RebeccaPurple);
+            }
         }
         else
         {
