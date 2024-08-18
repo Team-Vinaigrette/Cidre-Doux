@@ -7,7 +7,7 @@ namespace CidreDoux.scripts.view;
 /// <summary>
 /// Class used to render a tile on the screen.
 /// </summary>
-public partial class Tile : Node2D
+public partial class ViewTile : Node2D
 {
     /// <summary>
     /// The polygon manipulated by this tile class.
@@ -80,7 +80,7 @@ public partial class Tile : Node2D
     private void _OnSelectedTileChange(int column, int row)
     {
         // Check if the tile was selected.
-        if (Model._x == column && Model._y == row)
+        if (Model.Col == column && Model.Row == row)
         {
             ChangeTileColor(Colors.RebeccaPurple);
         }

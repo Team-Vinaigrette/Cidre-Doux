@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://rxgdwersj5"]
 
-[ext_resource type="Script" path="res://scripts/view/Tile.cs" id="1_of6p1"]
+[ext_resource type="Script" path="res://scripts/view/ViewTile.cs" id="1_3u64w"]
 [ext_resource type="Material" uid="uid://bxgob80cwgb06" path="res://materials/debug/tile.tres" id="2_yk70x"]
 
 [node name="Tile" type="Node2D" node_paths=PackedStringArray("Polygon")]
-script = ExtResource("1_of6p1")
+script = ExtResource("1_3u64w")
 Polygon = NodePath("Hex")
 
 [node name="Hex" type="Polygon2D" parent="."]
@@ -13,4 +13,9 @@ color = Color(1, 0, 1, 1)
 polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
 uv = PackedVector2Array(0, 1, 0.87, 0.5, 0.87, -0.5, 0, -1, -0.87, -0.5, -0.87, 0.5)
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Hex2" type="Polygon2D" parent="."]
+rotation = 0.523599
+scale = Vector2(0.8, 0.8)
+color = Color(0, 0.721273, 0.642874, 1)
+polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
+uv = PackedVector2Array(0, 1, 0.87, 0.5, 0.87, -0.5, 0, -1, -0.87, -0.5, -0.87, 0.5)
