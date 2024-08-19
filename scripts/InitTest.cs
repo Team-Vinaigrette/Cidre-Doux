@@ -1,6 +1,9 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.model.package;
+using CidreDoux.scripts.model.tile;
 
 namespace CidreDoux.scripts.model;
 
@@ -16,12 +19,12 @@ public partial class InitTest : Node2D
 
 		foreach (Tile t in farmTile.GetNeighbors())
 		{
-			GD.Print(t.ToStringMap());
+			GD.Print(t?.ToStringMap());
 		}
-		
+
 		foreach (Tile t in gameMap.GetTile(-1, 0).GetNeighbors())
 		{
-			GD.Print(t.ToStringMap());
+			GD.Print(t?.ToStringMap());
 		}
 
 		farmTile.Build(BuildingType.Farm);
@@ -29,9 +32,9 @@ public partial class InitTest : Node2D
 		mineTile.Build(BuildingType.Mine);
 		var sawTile = gameMap.GetTile(-2, -1);
 		sawTile.Build(BuildingType.Sawmill);
-		
+
 		GD.Print(gameMap.ToStringMap());
-		
+
 		Random randomizer = new Random();
 		List<Tile> dynamicPath = new List<Tile>();
 		String sequence = "";
@@ -45,28 +48,28 @@ public partial class InitTest : Node2D
 			} while (currentTile.ComputeCrossingCost() < 0);
 
 			dynamicPath.Add(currentTile);
-			GD.Print($"[{currentTile.Col},{currentTile.Row} ({currentTile.ComputeCrossingCost()})]");
-			sequence += $" -> [{currentTile.Col},{currentTile.Row} ({currentTile.ComputeCrossingCost()})]";
+			GD.Print($"[{currentTile.Location.Column},{currentTile.Location.Row} ({currentTile.ComputeCrossingCost()})]");
+			sequence += $" -> [{currentTile.Location.Column},{currentTile.Location.Row} ({currentTile.ComputeCrossingCost()})]";
 		}
-		
+
 		GD.Print(sequence);
-		
+
 		farmTile.AssignPath(new List<Tile>(dynamicPath));
 		Package pack = farmTile.Building.ProducePackage();
-		sawTile.NextTurn();
-		sawTile.NextTurn();
-		pack.actionHandler.performAction(sawTile);
+		sawTile.ExecuteTurn();
+		sawTile.ExecuteTurn();
+		pack.ActionHandler.PerformAction(sawTile);
 
-		while (pack.path.Count > 0)
+		while (pack.Path.Count > 0)
 		{
 			foreach (var Tile in pack.Walk())
 			{
 				GD.Print(Tile);
 			}
-			GD.Print(pack.performedAlready);
-			
+			GD.Print(pack.LeftoverMovement);
+
 		}
-		
+
 		GD.Print("Out");
 	}
 

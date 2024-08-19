@@ -1,15 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5kvuvhlqr1q4"]
+[gd_scene load_steps=6 format=3 uid="uid://c5kvuvhlqr1q4"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
-[ext_resource type="PackedScene" path="res://scenes/UI.tscn" id="2_lxprr"]
+[ext_resource type="Script" path="res://scripts/controller/GameController.cs" id="1_hm80b"]
+[ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
+[ext_resource type="PackedScene" uid="uid://dy68q3ggsdsai" path="res://scenes/player.tscn" id="3_6t48a"]
+[ext_resource type="Script" path="res://scripts/InitTest.cs" id="4_4t4q0"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player")]
+script = ExtResource("1_hm80b")
+World = NodePath("World")
+Player = NodePath("Player")
 
-[node name="World" parent="." node_paths=PackedStringArray("Camera") instance=ExtResource("1_eqon8")]
-Width = 10
-Height = 10
-Camera = NodePath("../Camera2D")
-
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="World" parent="." instance=ExtResource("1_eqon8")]
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
+
+[node name="Player" parent="." instance=ExtResource("3_6t48a")]
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(-1, 0)
+script = ExtResource("4_4t4q0")
