@@ -2,7 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using CidreDoux.scripts;
+using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model;
+using CidreDoux.scripts.model.building;
 
 public partial class Builder : Node2D
 {
@@ -15,14 +17,11 @@ public partial class Builder : Node2D
 		[BuildingType.Sawmill] = new Rect2(830, 450, 340, 320),
 		[BuildingType.Harbor] = new Rect2(0, 850, 380, 350),
 		[BuildingType.Road] = new Rect2(400, 850, 360, 350),
-		[BuildingType.Base] = new Rect2(0, 0, 360, 400),
 	};
 
 	[Export] public Control MyControl;
 
 	[Export] public Sprite2D MySprite;
-
-	[Export] public World MyWorld;
 
 	[Export] public BuildingType BuildingType;
 	
@@ -61,21 +60,22 @@ public partial class Builder : Node2D
 	public override void _Input(InputEvent @event)
 	{
 		if (!_isHovered) return;
+		var controller = GameController.GetController();
 		
 		if (Input.IsActionJustPressed("click"))
 		{
 			_isDragged = true;
-			MyWorld.ChangeState(GameState.Build);
+			controller.ChangeState(GameState.Build);
 			_offset = GetGlobalMousePosition() - GlobalPosition;
 			_startPos = GetPosition();
 		}
 
 		if (Input.IsActionJustReleased("click"))
 		{
-			MyWorld.RequestBuild(BuildingType);
+			controller.RequestBuild(BuildingType);
 			Position = _startPos;
 			_isDragged = false;
-			MyWorld.ChangeState(GameState.Idle);
+			controller.ChangeState(GameState.Idle);
 		}
 	}
 }

@@ -8,9 +8,9 @@
 atlas = ExtResource("2_anqcc")
 region = Rect2(0, 0, 400, 400)
 
-[node name="Tile" type="Node2D" node_paths=PackedStringArray("Polygon", "BuildingSprite")]
+[node name="Tile" type="Node2D" node_paths=PackedStringArray("Background", "BuildingSprite")]
 script = ExtResource("1_3u64w")
-Polygon = NodePath("Hex")
+Background = NodePath("Hex")
 BuildingSprite = NodePath("Sprite2D")
 
 [node name="Hex" type="Polygon2D" parent="."]
@@ -22,19 +22,17 @@ texture_scale = Vector2(200, 200)
 polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
 uv = PackedVector2Array(0.5, 1, 1, 0.87, 1, 0.37, 0.5, 0, 0, 0.37, 0, 0.87)
 
-[node name="Hex2" type="Polygon2D" parent="."]
-visible = false
-rotation = 0.523599
-scale = Vector2(0.8, 0.8)
-color = Color(0, 0.721273, 0.642874, 1)
-polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
-uv = PackedVector2Array(0, 1, 0.87, 0.5, 0.87, -0.5, 0, -1, -0.87, -0.5, -0.87, 0.5)
-
 [node name="Area2D" type="Area2D" parent="."]
 visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
 polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
+closed = true
+width = 5.0
+default_color = Color(0.302781, 0, 0.0713638, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.4, 0.4)

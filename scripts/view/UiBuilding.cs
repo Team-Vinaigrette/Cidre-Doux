@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using CidreDoux.scripts.model;
+using CidreDoux.scripts.model.building;
 
 public partial class UiBuilding : Control
 {

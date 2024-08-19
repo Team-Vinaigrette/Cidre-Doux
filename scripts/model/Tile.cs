@@ -15,7 +15,7 @@ public enum BackgroundType
 
 public partial class Tile : GodotObject
 {
-    [Signal] public delegate void OnModelUpdateEventHandler();
+    
     
     static Tuple<int, int>[] relativeOddNeighbors =
     {

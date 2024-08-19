@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dfywxgi155v3k"]
+[gd_scene load_steps=2 format=3 uid="uid://dfywxgi155v3k"]
 
 [ext_resource type="PackedScene" uid="uid://qb4burus8olj" path="res://scenes/builder.tscn" id="1_3vned"]
-[ext_resource type="Script" path="res://scripts/view/BuildPanel.cs" id="1_4wdcu"]
 
 [node name="BuildPanel" type="Node2D"]
-script = ExtResource("1_4wdcu")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(0.838502, 0.697598, 0.748888, 1)

@@ -2,13 +2,14 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using CidreDoux.scripts.model;
+using CidreDoux.scripts.model.tile;
 using CidreDoux.scripts.view;
 
 public partial class Path : Node2D
 {
     [Export] public Line2D Line;
     
-    public List<Tile> path { get; private set; }
+    public List<Tile> TilePath { get; private set; }
 
     public override void _Ready()
     {
@@ -17,7 +18,7 @@ public partial class Path : Node2D
 
     public void UpdatePath(List<Tile> path)
     {
-        this.path = path;
+        this.TilePath = path;
         if (path is null)
         {
             Line.Points = null;
