@@ -84,7 +84,7 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <returns>The generated <see cref="PackageProducer"/> instance.</returns>
     public static PackageProducer CreateBuildProducer(int delay)
     {
-        return new PackageProducer(PackageType.Ressource, null, delay);
+        return new PackageProducer(PackageType.Build, null, delay);
     }
 
     /// <summary>

@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="BuildingTextureMap" load_steps=13 format=3 uid="uid://bk5rt1twr67sh"]
+
+[ext_resource type="Script" path="res://scripts/resources/BuildingTextureMap.cs" id="1_0367v"]
+[ext_resource type="Texture2D" uid="uid://vhwsapm0c5i3" path="res://ressources/bâtiments.png" id="1_a0clg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ynphx"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(20, 10, 320, 380)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vwhn"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(440, 430, 260, 310)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_dtpoa"]
+load_path = "res://.godot/imported/bâtiments.png-04a643b58552de3f8d0bfc797240eedc.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2u007"]
+resource_name = "Base Texture"
+atlas = SubResource("CompressedTexture2D_dtpoa")
+region = Rect2(20, 480, 330, 270)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5730"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(20, 850, 350, 330)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w32g4"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(440, 70, 270, 310)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21f0l"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(820, 30, 360, 395)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3ltx0"]
+load_path = "res://.godot/imported/bâtiments.png-04a643b58552de3f8d0bfc797240eedc.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqryb"]
+resource_name = "Base Texture"
+atlas = SubResource("CompressedTexture2D_3ltx0")
+region = Rect2(460, 910, 240, 270)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rcexx"]
+resource_name = "Base Texture"
+atlas = ExtResource("1_a0clg")
+region = Rect2(870, 500, 250, 220)
+
+[resource]
+resource_name = "Building Texture Map"
+script = ExtResource("1_0367v")
+Field = SubResource("AtlasTexture_2u007")
+Farm = SubResource("AtlasTexture_7vwhn")
+Mine = SubResource("AtlasTexture_21f0l")
+Sawmill = SubResource("AtlasTexture_rcexx")
+Harbor = SubResource("AtlasTexture_k5730")
+Market = SubResource("AtlasTexture_w32g4")
+Road = SubResource("AtlasTexture_aqryb")
+Base = SubResource("AtlasTexture_ynphx")

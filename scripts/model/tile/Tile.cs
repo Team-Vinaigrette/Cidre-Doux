@@ -17,7 +17,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     /// Delegate handler for OnModelUpdate signal
     /// </summary>
     [Signal] public delegate void OnModelUpdateEventHandler();
-    
+
     /// <summary>
     /// The background type of this tile.
     /// </summary>
@@ -84,6 +84,13 @@ public partial class Tile: GodotObject, ITurnExecutor
         ParentMap = parent;
     }
 
+    /// <summary>
+    /// Empty constructor required by Godot.
+    /// </summary>
+    public Tile(): this(new TileLocation(0, 0), BackgroundType.Grass, null)
+    {
+    }
+
     /// <inheritdoc cref="object.ToString"/>
     public override string ToString() {
         return $"Tile {Location}<{Background}, {Building}>";
@@ -128,7 +135,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     {
         return Building is not null;
     }
-    
+
     /// <summary>
     /// Adds a new building to this tile.
     /// </summary>
@@ -176,7 +183,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     public int ComputeCrossingCost()
     {
         // Get the base cost from the background type.
-        var baseCost = ModelParameters.BackgroundTypeCrossingCosts[Background];
+        var baseCost = ProjectSettings.GetSettingWithOverride(ModelParameters.BackgroundTypeCrossingCostSettings[Background]).AsInt32();
 
         // Check if there is a building.
         return Building?.ComputeCrossingCost(baseCost) ?? baseCost;
@@ -187,7 +194,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     {
         Building.ExecuteTurn();
     }
-    
+
     private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom)
     {
         var current = this;
@@ -198,7 +205,7 @@ public partial class Tile: GodotObject, ITurnExecutor
             current = cameFrom[current];
             res.Push(current);
         }
-        
+
         return new List<Tile>(res);
     }
 
@@ -210,7 +217,7 @@ public partial class Tile: GodotObject, ITurnExecutor
         if (Mathf.Sign(dx) == Mathf.Sign(dy)) return ModelParameters.DefaultPackageSpeed + Mathf.Abs(dx + dy);
         else return ModelParameters.DefaultPackageSpeed + Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
     }
-    
+
     public List<Tile> AStar(Tile goal)
     {
         if (goal.ParentMap != ParentMap)
@@ -239,7 +246,7 @@ public partial class Tile: GodotObject, ITurnExecutor
                 // Cost of entering last tile is always 1 turn
                 var crossingCost = neighbor == goal ? ModelParameters.DefaultPackageSpeed : neighbor.ComputeCrossingCost();
                 if(crossingCost < 0) continue;
-                
+
                 int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;
                 int neighborGScore = gScores.ContainsKey(neighbor) ? gScores[neighbor] : int.MaxValue;
                 int tentativeGScore = (currentGScore + crossingCost);
@@ -252,7 +259,7 @@ public partial class Tile: GodotObject, ITurnExecutor
                 }
             }
         }
-        
+
         GD.Print($"AStar found no path from {this} to {goal}");
         return null;
     }
