@@ -98,12 +98,7 @@ public class HexMap
     public Tile GetTile(TileLocation location)
     {
         // Check if the tile exists in the map.
-        if (!Map.ContainsKey(location))
-        {
-            return null;
-        }
-
-        return Map[location];
+        return Map.GetValueOrDefault(location);
     }
 
     /// <summary>

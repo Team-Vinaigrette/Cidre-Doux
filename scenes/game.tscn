@@ -1,22 +1,25 @@
-[gd_scene load_steps=6 format=3 uid="uid://c5kvuvhlqr1q4"]
+[gd_scene load_steps=7 format=3 uid="uid://dgwoxlr0cvu0u"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="Script" path="res://scripts/controller/GameController.cs" id="1_hm80b"]
 [ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
 [ext_resource type="PackedScene" uid="uid://dy68q3ggsdsai" path="res://scenes/player.tscn" id="3_6t48a"]
-[ext_resource type="Script" path="res://scripts/InitTest.cs" id="4_4t4q0"]
+[ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="4_15vc6"]
+[ext_resource type="PackedScene" uid="uid://dfywxgi155v3k" path="res://scenes/buildPanel.tscn" id="4_q00aa"]
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player", "PathPreviewer")]
 script = ExtResource("1_hm80b")
 World = NodePath("World")
 Player = NodePath("Player")
+PathPreviewer = NodePath("PathPreview")
 
 [node name="World" parent="." instance=ExtResource("1_eqon8")]
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
 
+[node name="BuildPanel" parent="UI" instance=ExtResource("4_q00aa")]
+
 [node name="Player" parent="." instance=ExtResource("3_6t48a")]
 
-[node name="Node2D" type="Node2D" parent="."]
-position = Vector2(-1, 0)
-script = ExtResource("4_4t4q0")
+[node name="PathPreview" parent="." instance=ExtResource("4_15vc6")]
+visible = false

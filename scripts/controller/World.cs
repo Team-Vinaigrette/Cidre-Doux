@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.model.package.action;
 using CidreDoux.scripts.model.tile;
 using CidreDoux.scripts.view;
 using Godot;
@@ -27,18 +29,15 @@ public partial class World : Node2D
     /// </summary>
     [MaybeNull]
     public ViewTile SelectedTile { get; private set; }
-
-    /// <summary>
-    /// Dictionary of all the tiles found in the world.
-    /// </summary>
-    public readonly Dictionary<TileLocation, ViewTile> Tiles = new();
-
+    
     /// <summary>
     /// Signal emitted when the selected tile is changed.
     /// </summary>
     [Signal]
     public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
+    private HexMap _map;
+    
     /// <summary>
     /// Helper function used to retrieve the <see cref="ViewTile"/> at the given coordinates.
     /// </summary>
@@ -49,7 +48,7 @@ public partial class World : Node2D
         // Convert the column and row into an index.
         var column = location.Column + Size;
         var row = location.Row + Size;
-        var index = column * (2 * Size + 1) + row;
+        var index = row * (2 * Size + 1) + column;
 
         // Get the child at the specified location.
         var children = GetChildren();
@@ -70,7 +69,18 @@ public partial class World : Node2D
         GD.PrintErr($"Found a child at index {index} that was not a ViewTile!");
         return null;
     }
+    
+    /// <summary>
+    /// Return the center tile of the map that contains the player's base
+    /// </summary>
+    /// <returns></returns>
+    public Tile GetBaseTile()
+    {
+        return _map.GetTile(0, 0);
+    }
 
+
+    
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
     {
@@ -82,13 +92,14 @@ public partial class World : Node2D
         }
 
         // Initialize a new HexMap.
-        var map = new HexMap(Size);
+        _map = new HexMap(Size);
 
         // Create the ViewTiles for all the elements in the hex map.
-        foreach(var tile in map.Map.Values)
+        foreach(var tile in _map.Map.Values)
         {
             // Instantiate a new tile.
-            Tiles.Add(tile.Location, ViewTile.Instantiate(TileScene, tile, this));
+            AddChild(ViewTile.Instantiate(TileScene, tile));
+            
         }
     }
 

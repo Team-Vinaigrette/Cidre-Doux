@@ -6,7 +6,7 @@ namespace CidreDoux.scripts.model.package;
 public enum ResourceType
 {
     Wood,
-    Iron,
+    Stone,
     Wheat,
     Food,
     Gold

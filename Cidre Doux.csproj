@@ -6,4 +6,13 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CidreDoux</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="scripts\World.cs" />
+    <Compile Remove="scripts\model\Tile.cs" />
+    <Compile Remove="scripts\model\HexMap.cs" />
+    <Compile Remove="scripts\model\Building.cs" />
+    <Compile Remove="scripts\controller\SmState.cs" />
+    <Compile Remove="scripts\controller\StateMachine.cs" />
+    <Compile Remove="scripts\controller\IdleState.cs" />
+  </ItemGroup>
 </Project>

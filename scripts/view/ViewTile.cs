@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model;
+using CidreDoux.scripts.model.building;
 using CidreDoux.scripts.model.tile;
 using Godot;
 
@@ -12,21 +14,38 @@ namespace CidreDoux.scripts.view;
 /// </summary>
 public partial class ViewTile : Node2D
 {
+    private static Dictionary<BackgroundType, Vector2> _BGCoords = new Dictionary<BackgroundType, Vector2>()
+    {
+        [BackgroundType.Water] = new Vector2(0, 0),
+        [BackgroundType.Forest] = new Vector2(0, 1),
+        [BackgroundType.Grass] = new Vector2(1, 0),
+        [BackgroundType.Mountain] = new Vector2(1, 1)
+    };
+
+    private static Dictionary<BuildingType, Rect2> _BuildingCoords = new Dictionary<BuildingType, Rect2>(){
+        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
+        [BuildingType.Market] = new Rect2(400, 40, 360, 360),
+        [BuildingType.Mine] = new Rect2(800, 20, 380, 400),
+        [BuildingType.Field] = new Rect2(0, 460, 380, 300),
+        [BuildingType.Farm] = new Rect2(400, 430, 330, 320),
+        [BuildingType.Sawmill] = new Rect2(830, 450, 340, 320),
+        [BuildingType.Harbor] = new Rect2(0, 850, 380, 350),
+        [BuildingType.Road] = new Rect2(400, 850, 360, 350),
+        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
+    };
+
+    private static Vector2 BaseOffset = new Vector2(0, -30);
+    
     /// <summary>
     /// The background polygon of this tile.
     /// </summary>
     [Export, MaybeNull] public Polygon2D Background;
 
     /// <summary>
-    /// The building polygon of this tile.
+    /// The sprite displaying this tile's building
     /// </summary>
-    [Export, MaybeNull] public Polygon2D Building;
-
-    /// <summary>
-    /// The border of the tile.
-    /// </summary>
-    [Export, MaybeNull] public Line2D Border;
-
+    [Export] public Sprite2D BuildingSprite;
+    
     /// <summary>
     /// Reference to the <see cref="World"/> that owns this tile.
     /// </summary>
@@ -88,8 +107,22 @@ public partial class ViewTile : Node2D
 
         // Watch for updates to the selected tile.
         World.OnSelectedTileChange += _OnSelectedTileChange;
+        Model.OnModelUpdate += _OnModelUpdate;
     }
 
+    public void _OnModelUpdate()
+    {
+        GD.Print($"ModelUpdate {Model}");
+        Background.TextureOffset = _BGCoords[Model.Background];
+        if (Model.HasBuilding())
+        {
+            if(Model.Building.Type == BuildingType.Base) BuildingSprite.Position = BaseOffset; else BuildingSprite.Position = Vector2.Zero;
+            BuildingSprite.SetRegionRect(_BuildingCoords[Model.Building.Type]);
+            BuildingSprite.Visible = true;
+        }
+        else BuildingSprite.Visible = false;
+    }
+    
     /// <summary>
     /// Callback triggered by the <see cref="World"/> class when the selected tile changes.
     /// </summary>
@@ -98,14 +131,24 @@ public partial class ViewTile : Node2D
     private void _OnSelectedTileChange(int column, int row)
     {
         // Check if the tile was selected.
-        if (Model.Location.Column == column && Model.Location.Row == row)
+        if (!(Model.Location.Column == column && Model.Location.Row == row))
         {
-            ChangeTileColor(Colors.RebeccaPurple);
+            ChangeTileColor(Colors.White);
+            return;
+        }
+
+        var controller = GameController.GetController();
+        if (controller.CurrentState == GameState.Build && Model.HasBuilding()){
+            ChangeTileColor(Colors.Red);
+            controller.PathPreviewer.UpdatePath(null);
         }
         else
         {
-            ChangeTileColor(Colors.White);
+            var preview = controller.World.GetBaseTile().AStar(Model);
+            controller.PathPreviewer.UpdatePath(preview);
+            ChangeTileColor(Colors.RebeccaPurple);
         }
+    
     }
 
     /// <summary>
@@ -133,7 +176,7 @@ public partial class ViewTile : Node2D
     /// <param name="model">The <see cref="Tile"/> that is being represented by this tile.</param>
     /// <param name="parent">The <see cref="controller.World"/> that this tile will be attached to.</param>
     /// <returns></returns>
-    public static ViewTile Instantiate(PackedScene scene, Tile model, World parent)
+    public static ViewTile Instantiate(PackedScene scene, Tile model)
     {
         // Initialize the game object.
         var tile = scene.Instantiate<ViewTile>();
@@ -145,9 +188,7 @@ public partial class ViewTile : Node2D
         // Set the location of the tile.
         tile.Position = GetHexagonCenterWorldPosition(model.Location.Column, model.Location.Row);
 
-        // Attach to the world.
-        parent.AddChild(tile);
-
+        tile._OnModelUpdate();
         return tile;
     }
 
@@ -182,6 +223,17 @@ public partial class ViewTile : Node2D
         // Return the computed position.
         return new Vector2(x, y);
     }
+
+    /// <summary>
+    /// Retrieves the world position for the center of a hexagon with the given map coordinates.
+    /// </summary>
+    /// <param name="tile">The world map tile</param>
+    /// <returns></returns>
+    public static Vector2 GetHexagonCenterWorldPosition(Tile tile)
+    {
+        return GetHexagonCenterWorldPosition(tile.Location.Column, tile.Location.Row);
+    }
+
 
     /// <summary>
     /// Retrieves the column/row map coordinates from a hex's center.

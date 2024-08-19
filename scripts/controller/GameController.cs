@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.model.package.action;
 using Godot;
 
 namespace CidreDoux.scripts.controller;
@@ -25,6 +27,15 @@ public partial class GameController : Node
     /// </summary>
     [Export] public Player Player;
 
+    [Export] public Path PathPreviewer;
+    public GameState CurrentState { get; private set; }
+
+    public void ChangeState(GameState newState)
+    {
+        PathPreviewer.SetVisible(newState == GameState.Build);
+        CurrentState = newState;
+    }
+    
     /// <summary>
     /// Static accessor for the singleton instance.
     /// </summary>
@@ -69,5 +80,18 @@ public partial class GameController : Node
             _instance = null;
             break;
         }
+    }
+    
+    /// <summary>
+    /// Configures the base to send a build package at the end of the turn
+    /// </summary>
+    /// <param name="type"></param>
+    public void RequestBuild(BuildingType type)
+    {
+        World.SelectedTile.Model.Build(type);
+
+        var @base = World.GetBaseTile();
+        @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
+        @base.AssignPath(@base.AStar(World.SelectedTile.Model));
     }
 }

@@ -16,10 +16,10 @@ public class BuildAction: IPackageAction
     /// <summary>
     /// Class constructor.
     /// </summary>
-    /// <param name="resourceType">The type of resource being delivered.</param>
-    public BuildAction(BuildingType resourceType)
+    /// <param name="buildingType">The type of resource being delivered.</param>
+    public BuildAction(BuildingType buildingType)
     {
-        BuildingType = resourceType;
+        BuildingType = buildingType;
     }
 
     /// <inheritdoc cref="IPackageAction.PerformAction"/>

@@ -6,6 +6,7 @@ using CidreDoux.scripts.model.building.crossing_cost;
 using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.tile;
 using Godot;
+using CrossingCostMultiplier = CidreDoux.scripts.model.building.crossing_cost.CrossingCostMultiplier;
 
 namespace CidreDoux.scripts.model.building;
 
@@ -46,7 +47,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// </summary>
     /// <param name="type">The type of building to create.</param>
     /// <returns>The generated <see cref="Building"/> resource.</returns>
-    public static Building CreateBuilding(BuildingType type)
+    [return: MaybeNull] public static Building CreateBuilding(BuildingType type)
     {
         switch (type)
         {
@@ -54,7 +55,11 @@ public class Building : ICrossingCostComputer, ITurnExecutor
             return new Building(
                 type,
                 PackageProducer.CreateBuildProducer(1),
-                new[] { new ResourceConsumer(ResourceType.Iron, 1, 5) },
+                new[]
+                {
+                    new ResourceConsumer(ResourceType.Stone, 1, 5),
+                    new ResourceConsumer(ResourceType.Gold, 1, 20)
+                },
                 new CrossingBlocker()
             );
         case BuildingType.Farm:
@@ -66,14 +71,14 @@ public class Building : ICrossingCostComputer, ITurnExecutor
         case BuildingType.Mine:
             return new Building(
                 type,
-                PackageProducer.CreateResourceProducer(ResourceType.Wood, 10),
-                new[] { new ResourceConsumer(ResourceType.Iron, 1, 5) }
+                PackageProducer.CreateResourceProducer(ResourceType.Stone, 10),
+                new[] { new ResourceConsumer(ResourceType.Wood, 1, 5) }
             );
         case BuildingType.Sawmill:
             return new Building(
                 type,
                 PackageProducer.CreateResourceProducer(ResourceType.Wood, 10),
-                new[] { new ResourceConsumer(ResourceType.Iron, 1, 5) },
+                new[] { new ResourceConsumer(ResourceType.Stone, 1, 5) },
                 new CrossingCostMultiplier(2f)
             );
         case BuildingType.Road:
@@ -84,11 +89,28 @@ public class Building : ICrossingCostComputer, ITurnExecutor
                 new CrossingCostMultiplier(0.5f)
             );
         case BuildingType.Field:
+            return new Building(
+                type,
+                PackageProducer.CreateResourceProducer(ResourceType.Wheat, 5),
+                new[] { new ResourceConsumer(ResourceType.Wood, 1, 5) }
+            );
         case BuildingType.Harbor:
+            return new Building(
+                type,
+                PackageProducer.CreateResourceProducer(ResourceType.Food, 3),
+                new[] { new ResourceConsumer(ResourceType.Stone, 1, 3) },
+                new CrossingCostMultiplier(2.0f)
+            );
         case BuildingType.Market:
+            return new Building(
+                type,
+                PackageProducer.CreateResourceProducer(ResourceType.Gold, 8),
+                new[] { new ResourceConsumer(ResourceType.Food, 2, 8) },
+                new CrossingCostMultiplier(2.0f)
+            );
         default:
             GD.PrintErr($"Generator for {type} building type not yet implemented");
-            return new Building(type, null, Array.Empty<ResourceConsumer>());
+            return null;
         }
     }
 
