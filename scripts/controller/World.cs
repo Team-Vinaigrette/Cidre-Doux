@@ -116,8 +116,11 @@ public partial class World : Node2D
         var selectedLocation = ViewTile.GetHexagonMapCoordinates(ViewTile.FindClosestHexCenter(worldPosition));
 
         // Get the selected tile.
-        SelectedTile = GetViewTile(selectedLocation);
+        var newSelectedTile = GetViewTile(selectedLocation);
+        if (newSelectedTile == SelectedTile) return;
 
+
+        SelectedTile = newSelectedTile;
         // Send a "hover changed" event.
         EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
     }

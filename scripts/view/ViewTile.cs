@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model;
 using CidreDoux.scripts.model.building;
@@ -14,26 +15,6 @@ namespace CidreDoux.scripts.view;
 /// </summary>
 public partial class ViewTile : Node2D
 {
-    private static Dictionary<BackgroundType, Vector2> _BGCoords = new Dictionary<BackgroundType, Vector2>()
-    {
-        [BackgroundType.Water] = new Vector2(0, 0),
-        [BackgroundType.Forest] = new Vector2(0, 1),
-        [BackgroundType.Grass] = new Vector2(1, 0),
-        [BackgroundType.Mountain] = new Vector2(1, 1)
-    };
-
-    private static Dictionary<BuildingType, Rect2> _BuildingCoords = new Dictionary<BuildingType, Rect2>(){
-        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
-        [BuildingType.Market] = new Rect2(400, 40, 360, 360),
-        [BuildingType.Mine] = new Rect2(800, 20, 380, 400),
-        [BuildingType.Field] = new Rect2(0, 460, 380, 300),
-        [BuildingType.Farm] = new Rect2(400, 430, 330, 320),
-        [BuildingType.Sawmill] = new Rect2(830, 450, 340, 320),
-        [BuildingType.Harbor] = new Rect2(0, 850, 380, 350),
-        [BuildingType.Road] = new Rect2(400, 850, 360, 350),
-        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
-    };
-
     private static Vector2 BaseOffset = new Vector2(0, -30);
     
     /// <summary>
@@ -104,6 +85,9 @@ public partial class ViewTile : Node2D
     public override void _Ready()
     {
         base._Ready();
+        
+        Background.TextureOffset = TextureCoords.Backgrounds[Model.Background];
+
 
         // Watch for updates to the selected tile.
         World.OnSelectedTileChange += _OnSelectedTileChange;
@@ -112,12 +96,10 @@ public partial class ViewTile : Node2D
 
     public void _OnModelUpdate()
     {
-        GD.Print($"ModelUpdate {Model}");
-        Background.TextureOffset = _BGCoords[Model.Background];
         if (Model.HasBuilding())
         {
-            if(Model.Building.Type == BuildingType.Base) BuildingSprite.Position = BaseOffset; else BuildingSprite.Position = Vector2.Zero;
-            BuildingSprite.SetRegionRect(_BuildingCoords[Model.Building.Type]);
+            BuildingSprite.Position = Model.Building.Type == BuildingType.Base ? BaseOffset : Vector2.Zero;
+            BuildingSprite.SetRegionRect(TextureCoords.Buildings[Model.Building.Type]);
             BuildingSprite.Visible = true;
         }
         else BuildingSprite.Visible = false;
@@ -136,19 +118,47 @@ public partial class ViewTile : Node2D
             ChangeTileColor(Colors.White);
             return;
         }
+        
+        ChangeTileColor(Colors.RebeccaPurple);
+        switch (GameController.GetController().CurrentState)
+        {
+            case GameState.Idle: break;
+            case GameState.Build: BuildTileChangeHandler();
+                break;
+            case GameState.AssignPath: AssignPathChangeHandler();
+                break;
+            case GameState.TurnEnd: break;
+        }
+    }
 
+    public void BuildTileChangeHandler()
+    {
         var controller = GameController.GetController();
-        if (controller.CurrentState == GameState.Build && Model.HasBuilding()){
+        if (Model.HasBuilding())
+        {
             ChangeTileColor(Colors.Red);
             controller.PathPreviewer.UpdatePath(null);
         }
         else
         {
             var preview = controller.World.GetBaseTile().AStar(Model);
-            controller.PathPreviewer.UpdatePath(preview);
-            ChangeTileColor(Colors.RebeccaPurple);
+            controller.PathPreviewer.UpdatePath(preview);   
         }
-    
+    }
+
+    public void AssignPathChangeHandler()
+    {
+        if (Model.ComputeCrossingCost() < 0) return;
+
+        var previewer = GameController.GetController().PathPreviewer;
+        var index = previewer.TilePath.IndexOf(Model);
+        if (index < 0)
+        {
+            if(previewer.TilePath.Last()?.IsNeighbor(Model) == true) previewer.TilePath.Add(Model);
+        }
+        else previewer.TilePath.RemoveRange(index, previewer.TilePath.Count-index);
+
+        previewer.UpdatePath(previewer.TilePath);
     }
 
     /// <summary>

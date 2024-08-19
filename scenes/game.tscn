@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://dgwoxlr0cvu0u"]
+[gd_scene load_steps=8 format=3 uid="uid://dgwoxlr0cvu0u"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="Script" path="res://scripts/controller/GameController.cs" id="1_hm80b"]
+[ext_resource type="PackedScene" uid="uid://ccot64jqk235" path="res://scenes/messenger.tscn" id="2_fqbkp"]
 [ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
 [ext_resource type="PackedScene" uid="uid://dy68q3ggsdsai" path="res://scenes/player.tscn" id="3_6t48a"]
 [ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="4_15vc6"]
@@ -9,6 +10,7 @@
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player", "PathPreviewer")]
 script = ExtResource("1_hm80b")
+MessengerScene = ExtResource("2_fqbkp")
 World = NodePath("World")
 Player = NodePath("Player")
 PathPreviewer = NodePath("PathPreview")

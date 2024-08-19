@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ccot64jqk235"]
+[gd_scene load_steps=6 format=3 uid="uid://ccot64jqk235"]
 
 [ext_resource type="Texture2D" uid="uid://bq7hgt5mbkeqs" path="res://ressources/ressources.png" id="1_8rcgf"]
+[ext_resource type="Script" path="res://scripts/view/Messenger.cs" id="1_cuqbu"]
+[ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="3_h4q5d"]
+[ext_resource type="Texture2D" uid="uid://vhwsapm0c5i3" path="res://ressources/bâtiments.png" id="3_twafn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v50qv"]
 bg_color = Color(1, 1, 1, 1)
@@ -14,7 +17,12 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="Messenger" type="Node2D"]
+[node name="Messenger" type="Node2D" node_paths=PackedStringArray("ResourceSprite", "BuildingSprite", "MessengerPath", "MessengerControl")]
+script = ExtResource("1_cuqbu")
+ResourceSprite = NodePath("Control/Panel/ResourceSprite")
+BuildingSprite = NodePath("Control/Panel/BuildingSprite")
+MessengerPath = NodePath("Path")
+MessengerControl = NodePath("Control/Panel")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -36,9 +44,21 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_v50qv")
 
-[node name="Sprite2D" type="Sprite2D" parent="Control/Panel"]
+[node name="ResourceSprite" type="Sprite2D" parent="Control/Panel"]
+visible = false
 position = Vector2(20, 20)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("1_8rcgf")
 region_enabled = true
-region_rect = Rect2(70, 90, 140, 150)
+region_rect = Rect2(70, 495, 140, 150)
+
+[node name="BuildingSprite" type="Sprite2D" parent="Control/Panel"]
+visible = false
+position = Vector2(20, 20)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("3_twafn")
+region_enabled = true
+region_rect = Rect2(0, 0, 360, 400)
+
+[node name="Path" parent="." instance=ExtResource("3_h4q5d")]
+visible = false

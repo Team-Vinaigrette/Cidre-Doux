@@ -21,9 +21,14 @@ public class Package
     public readonly IPackageAction ActionHandler;
 
     /// <summary>
-    /// Path that the package will follow.
+    /// Complete path the package will follow
     /// </summary>
-    public readonly Queue<Tile> Path;
+    public readonly List<Tile> CompletePath;
+    
+    /// <summary>
+    /// Remaining steps on the package's path
+    /// </summary>
+    public readonly Queue<Tile> RemainingPath;
 
     /// <summary>
     /// The movement speed of this package.
@@ -44,14 +49,19 @@ public class Package
     public Package(PackageType type, IPackageAction actionHandler, List<Tile> path)
     {
         Type = type;
-        Path = new Queue<Tile>(path);
+        CompletePath = new List<Tile>(path);
+        RemainingPath = new Queue<Tile>(path);
+        
+        // The starting tile does not need to be crossed
+        RemainingPath.Dequeue();
+        
         Speed = ModelParameters.DefaultPackageSpeed;
         ActionHandler = actionHandler;
         LeftoverMovement = 0;
     }
 
     /// <summary>
-    /// Callback used to walk along the <see cref="Path"/> of this package.
+    /// Callback used to walk along the <see cref="RemainingPath"/> of this package.
     /// </summary>
     /// <returns>An enumerable with all the <see cref="Tile"/> that were traversed.</returns>
     public IEnumerable<Tile> Walk()
@@ -60,10 +70,10 @@ public class Package
         var remainingDistance = Speed;
 
         // Iterate until there is some remaining speed and a path to traverse.
-        while (remainingDistance > 0 && Path.Count > 0)
+        while (remainingDistance > 0 && RemainingPath.Count > 0)
         {
             // Get the crossing cost for the next tile.
-            var tile = Path.Peek();
+            var tile = RemainingPath.Peek();
             var crossingCost = tile.ComputeCrossingCost() - LeftoverMovement;
 
             // If the Tile can be crossed, move over it.
@@ -71,7 +81,7 @@ public class Package
             {
                 remainingDistance -= tile.ComputeCrossingCost();
                 LeftoverMovement = 0;
-                yield return Path.Dequeue();
+                yield return RemainingPath.Dequeue();
             }
             else
             {

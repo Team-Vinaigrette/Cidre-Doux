@@ -60,7 +60,7 @@ public partial class InitTest : Node2D
 		sawTile.ExecuteTurn();
 		pack.ActionHandler.PerformAction(sawTile);
 
-		while (pack.Path.Count > 0)
+		while (pack.RemainingPath.Count > 0)
 		{
 			foreach (var Tile in pack.Walk())
 			{

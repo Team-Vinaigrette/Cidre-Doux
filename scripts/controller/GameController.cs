@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.package.action;
+using CidreDoux.scripts.model.tile;
 using Godot;
 
 namespace CidreDoux.scripts.controller;
@@ -17,6 +21,8 @@ public partial class GameController : Node
     /// </summary>
     [MaybeNull] private static GameController _instance;
 
+    [Export] public PackedScene MessengerScene;
+        
     /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
     /// </summary>
@@ -30,9 +36,11 @@ public partial class GameController : Node
     [Export] public Path PathPreviewer;
     public GameState CurrentState { get; private set; }
 
+    public Tile ActiveTile = null;
+    
     public void ChangeState(GameState newState)
     {
-        PathPreviewer.SetVisible(newState == GameState.Build);
+        PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
         CurrentState = newState;
     }
     
@@ -88,10 +96,51 @@ public partial class GameController : Node
     /// <param name="type"></param>
     public void RequestBuild(BuildingType type)
     {
-        World.SelectedTile.Model.Build(type);
+        // World.SelectedTile.Model.Build(type);
 
-        var @base = World.GetBaseTile();
-        @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
-        @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        var package = new Package(PackageType.Build, new BuildAction(type),
+            World.GetBaseTile().AStar(World.SelectedTile.Model));
+        
+        AddChild(Messenger.Instantiate(MessengerScene, package));
+        
+        // var @base = World.GetBaseTile();
+        // @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
+        // @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+    }
+
+    public override void _Process(double delta)
+    {
+        if (CurrentState == GameState.Idle)
+        {
+            if (Input.IsActionJustPressed("space"))
+            {
+                foreach (var messenger in GetChildren().OfType<Messenger>())
+                {
+                    messenger.Walk();
+                }
+            }
+
+            if (Input.IsActionJustPressed("click"))
+            {
+                if (World.SelectedTile.Model.HasBuilding())
+                {
+                    if (World.SelectedTile.Model.Building.PackageProducer is not null)
+                    {
+                        ActiveTile = World.SelectedTile.Model;
+                        PathPreviewer.UpdatePath(new List<Tile>{ActiveTile});
+                        ChangeState(GameState.AssignPath);
+                    }
+                }
+            }
+        }
+
+        if (CurrentState == GameState.AssignPath)
+        {
+            if (Input.IsActionJustReleased("click"))
+            {
+                ActiveTile.Building.AssignPath(new List<Tile>(PathPreviewer.TilePath));
+                ChangeState(GameState.Idle);
+            }
+        }
     }
 }
