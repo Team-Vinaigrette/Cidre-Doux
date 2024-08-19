@@ -70,11 +70,4 @@ public partial class GameController : Node
             break;
         }
     }
-
-    /// <inheritdoc cref="Node._EnterTree"/>.
-    public override void _ExitTree()
-    {
-        // Clear the instance.
-        _instance = null;
-    }
 }

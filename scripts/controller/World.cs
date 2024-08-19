@@ -23,15 +23,21 @@ public partial class World : Node2D
     [Export] public int Size = 10;
 
     /// <summary>
+    /// The currently selected tile.
+    /// </summary>
+    [MaybeNull]
+    public ViewTile SelectedTile { get; private set; }
+
+    /// <summary>
     /// Dictionary of all the tiles found in the world.
     /// </summary>
     public readonly Dictionary<TileLocation, ViewTile> Tiles = new();
 
     /// <summary>
-    /// The currently selected tile.
+    /// Signal emitted when the selected tile is changed.
     /// </summary>
-    [MaybeNull]
-    public ViewTile SelectedTile { get; private set; }
+    [Signal]
+    public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
     /// <summary>
     /// Helper function used to retrieve the <see cref="ViewTile"/> at the given coordinates.
@@ -100,5 +106,8 @@ public partial class World : Node2D
 
         // Get the selected tile.
         SelectedTile = GetViewTile(selectedLocation);
+
+        // Send a "hover changed" event.
+        EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
     }
 }

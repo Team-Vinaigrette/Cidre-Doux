@@ -81,6 +81,33 @@ public partial class ViewTile : Node2D
         CenterToCenterVerticalDistance
     );
 
+    /// <inheritdoc cref="Node._Ready"/>
+    public override void _Ready()
+    {
+        base._Ready();
+
+        // Watch for updates to the selected tile.
+        World.OnSelectedTileChange += _OnSelectedTileChange;
+    }
+
+    /// <summary>
+    /// Callback triggered by the <see cref="World"/> class when the selected tile changes.
+    /// </summary>
+    /// <param name="column">The column number of the selected tile.</param>
+    /// <param name="row">The row number of the selected tile.</param>
+    private void _OnSelectedTileChange(int column, int row)
+    {
+        // Check if the tile was selected.
+        if (Model.Location.Column == column && Model.Location.Row == row)
+        {
+            ChangeTileColor(Colors.RebeccaPurple);
+        }
+        else
+        {
+            ChangeTileColor(Colors.White);
+        }
+    }
+
     /// <summary>
     /// Simple method used to update the color of a Tile.
     /// </summary>
