@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using CidreDoux.scripts.model;
 using Godot;
 
 namespace CidreDoux.scripts.view;
@@ -9,10 +11,34 @@ namespace CidreDoux.scripts.view;
 /// </summary>
 public partial class ViewTile : Node2D
 {
+    private static Dictionary<BackgroundType, Vector2> _BGCoords = new Dictionary<BackgroundType, Vector2>()
+    {
+        [BackgroundType.Water] = new Vector2(0, 0),
+        [BackgroundType.Forest] = new Vector2(0, 1),
+        [BackgroundType.Grass] = new Vector2(1, 0),
+        [BackgroundType.Mountain] = new Vector2(1, 1)
+    };
+
+    private static Dictionary<BuildingType, Rect2> _BuildingCoords = new Dictionary<BuildingType, Rect2>(){
+        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
+        [BuildingType.Market] = new Rect2(400, 40, 360, 360),
+        [BuildingType.Mine] = new Rect2(800, 20, 380, 400),
+        [BuildingType.Field] = new Rect2(0, 460, 380, 300),
+        [BuildingType.Farm] = new Rect2(400, 430, 330, 320),
+        [BuildingType.Sawmill] = new Rect2(830, 450, 340, 320),
+        [BuildingType.Harbor] = new Rect2(0, 850, 380, 350),
+        [BuildingType.Road] = new Rect2(400, 850, 360, 350),
+        [BuildingType.Base] = new Rect2(0, 0, 360, 400),
+    };
+
+    private static Vector2 BaseOffset = new Vector2(0, -30);
+    
     /// <summary>
     /// The polygon manipulated by this tile class.
     /// </summary>
     [Export, MaybeNull] public Polygon2D Polygon;
+
+    [Export] public Sprite2D BuildingSprite;
 
     /// <summary>
     /// Reference to the <see cref="World"/> that owns this tile.
@@ -70,8 +96,22 @@ public partial class ViewTile : Node2D
 
         // Watch for updates to the selected tile.
         World.OnSelectedTileChange += _OnSelectedTileChange;
+        Model.OnModelUpdate += _OnModelUpdate;
     }
 
+    public void _OnModelUpdate()
+    {
+        GD.Print($"ModelUpdate {Model}");
+        Polygon.TextureOffset = _BGCoords[Model.Background];
+        if (Model.HasBuilding())
+        {
+            if(Model.Building.Type == BuildingType.Base) BuildingSprite.Position = BaseOffset; else BuildingSprite.Position = Vector2.Zero;
+            BuildingSprite.SetRegionRect(_BuildingCoords[Model.Building.Type]);
+            BuildingSprite.Visible = true;
+        }
+        else BuildingSprite.Visible = false;
+    }
+    
     /// <summary>
     /// Callback triggered by the <see cref="World"/> class when the selected tile changes.
     /// </summary>
@@ -80,20 +120,23 @@ public partial class ViewTile : Node2D
     private void _OnSelectedTileChange(int column, int row)
     {
         // Check if the tile was selected.
-        if (Model.Col == column && Model.Row == row)
+        if (!(Model.Col == column && Model.Row == row))
         {
-            if (World.CurrentState == GameState.Build && Model.HasBuilding()){
-                ChangeTileColor(Colors.Red);
-            }
-            else
-            {
-                ChangeTileColor(Colors.RebeccaPurple);
-            }
+            ChangeTileColor(Colors.White);
+            return;
+        }
+
+        if (World.CurrentState == GameState.Build && Model.HasBuilding()){
+            ChangeTileColor(Colors.Red);
+            World.PathPreviewer.UpdatePath(null);
         }
         else
         {
-            ChangeTileColor(Colors.White);
+            var preview = World.GetBaseTile().AStar(Model);
+            World.PathPreviewer.UpdatePath(preview);
+            ChangeTileColor(Colors.RebeccaPurple);
         }
+    
     }
 
     /// <summary>
@@ -144,6 +187,17 @@ public partial class ViewTile : Node2D
         // Return the computed position.
         return new Vector2(x, y);
     }
+
+    /// <summary>
+    /// Retrieves the world position for the center of a hexagon with the given map coordinates.
+    /// </summary>
+    /// <param name="tile">The world map tile</param>
+    /// <returns></returns>
+    public static Vector2 GetHexagonCenterWorldPosition(model.Tile tile)
+    {
+        return GetHexagonCenterWorldPosition(tile.Col, tile.Row);
+    }
+
 
     /// <summary>
     /// Retrieves the column/row map coordinates from a hex's center.

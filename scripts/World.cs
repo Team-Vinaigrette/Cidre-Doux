@@ -37,6 +37,8 @@ public partial class World : Node2D
     /// </summary>
     [Export, MaybeNull] public Camera2D Camera;
 
+    [Export] public Path PathPreviewer;
+
     /// <summary>
     /// Signal emitted when the selected tile is changed.
     /// </summary>
@@ -47,6 +49,7 @@ public partial class World : Node2D
 
     public void ChangeState(GameState newState)
     {
+        PathPreviewer.SetVisible(newState == GameState.Build);
         CurrentState = newState;
     }
     
@@ -61,6 +64,11 @@ public partial class World : Node2D
         var tile = _map.GetTile(HoveredTile.Item1, HoveredTile.Item2);
         tile.Build(type);
     }
+
+    public Tile GetBaseTile()
+    {
+        return _map.GetTile(0, 0);
+    }
     
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
@@ -72,7 +80,7 @@ public partial class World : Node2D
             return;
         }
 
-        _map = new HexMap(4);
+        _map = new HexMap(Width);
 
         foreach(Tile tile in _map.Map.Values)
         {
@@ -87,16 +95,17 @@ public partial class World : Node2D
         
             // Set the position of the tile.
             viewTile.Position = ViewTile.GetHexagonCenterWorldPosition(tile.Col, tile.Row);
+            viewTile._OnModelUpdate();
         }
 
-        GD.Print(_map.ToStringMap());
+        // GD.Print(_map.ToStringMap());
         
-        var path = _map.GetTile(0, 0).AStar(_map.GetTile(0, 1));
-        path = _map.GetTile(0, 0).AStar(_map.GetTile(3, 3));
-        path = _map.GetTile(3, 3).AStar(_map.GetTile(0, 0));
-        
-        
-        GD.Print("out");
+        // var path = _map.GetTile(0, 0).AStar(_map.GetTile(0, 1));
+        // path = _map.GetTile(0, 0).AStar(_map.GetTile(3, 3));
+        // path = _map.GetTile(3, 3).AStar(_map.GetTile(0, 0));
+        //
+        //
+        // GD.Print("out");
     }
 
     /// <inheritdoc cref="Node._Process"/>

@@ -6,7 +6,7 @@ using CidreDoux.scripts.model;
 
 public partial class Builder : Node2D
 {
-	private static Dictionary<BuildingType, Rect2> textureCoords = new Dictionary<BuildingType, Rect2>(){
+	private static Dictionary<BuildingType, Rect2> _textureCoords = new Dictionary<BuildingType, Rect2>(){
 		[BuildingType.Base] = new Rect2(0, 0, 360, 400),
 		[BuildingType.Market] = new Rect2(400, 40, 360, 360),
 		[BuildingType.Mine] = new Rect2(800, 20, 380, 400),
@@ -36,18 +36,16 @@ public partial class Builder : Node2D
 	{
 		MyControl.Connect(Control.SignalName.MouseEntered, new Callable(this, MethodName.HandleMouseEntered));
 		MyControl.Connect(Control.SignalName.MouseExited, new Callable(this, MethodName.HandleMouseExit));
-		MySprite.SetRegionRect(textureCoords[BuildingType]);
+		MySprite.SetRegionRect(_textureCoords[BuildingType]);
 	}
 
 	public void HandleMouseEntered()
 	{
-		GD.Print($"Entered {this.Name}");
 		_isHovered = true;
 	}
 
 	public void HandleMouseExit()
 	{
-		GD.Print($"Exited {this.Name}");
 		_isHovered = false;
 	}
 	

@@ -2,25 +2,23 @@
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
-[ext_resource type="PackedScene" uid="uid://qb4burus8olj" path="res://scenes/builder.tscn" id="3_6mmq7"]
+[ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="4_15vc6"]
 [ext_resource type="PackedScene" uid="uid://dfywxgi155v3k" path="res://scenes/buildPanel.tscn" id="4_q00aa"]
 
 [node name="Game" type="Node2D"]
 
-[node name="World" parent="." node_paths=PackedStringArray("Camera") instance=ExtResource("1_eqon8")]
+[node name="World" parent="." node_paths=PackedStringArray("Camera", "PathPreviewer") instance=ExtResource("1_eqon8")]
 Width = 10
 Height = 10
 Camera = NodePath("../Camera2D")
+PathPreviewer = NodePath("../BuildPathPreview")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-
-[node name="Builder2" parent="." node_paths=PackedStringArray("MyWorld") instance=ExtResource("3_6mmq7")]
-position = Vector2(-508, -154)
-scale = Vector2(0.3, 0.3)
-MyWorld = NodePath("../World")
-BuildingType = 2
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
 
 [node name="BuildPanel" parent="UI" node_paths=PackedStringArray("World") instance=ExtResource("4_q00aa")]
 World = NodePath("../../World")
+
+[node name="BuildPathPreview" parent="." instance=ExtResource("4_15vc6")]
+visible = false

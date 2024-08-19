@@ -13,8 +13,10 @@ public enum BackgroundType
     Water
 }
 
-public class Tile
+public partial class Tile : GodotObject
 {
+    [Signal] public delegate void OnModelUpdateEventHandler();
+    
     static Tuple<int, int>[] relativeOddNeighbors =
     {
         Tuple.Create(-1, 0),
@@ -90,7 +92,9 @@ public class Tile
         {
             GD.Print($"<{Col}:{Row}> Building: {buildingType}");
             Building = Building.NewBuilding(buildingType);
+            EmitSignal(Tile.SignalName.OnModelUpdate);
         }
+        
     }
 
     public void Consume(RessourceType ressource)
@@ -135,18 +139,18 @@ public class Tile
         return new List<Tile>(res);
     }
 
-    private int ManhattanDist(Tile goal)
+    public int ManhattanDist(Tile goal)
     {
         var dx = goal.Col - this.Col;
         var dy = goal.Row - this.Row;
 
         if (Mathf.Sign(dx) == Mathf.Sign(dy))
         {
-            return Mathf.Abs(dx + dy);
+            return ModelParameters.DefaultPackageSpeed + Mathf.Abs(dx + dy);
         }
         else
         {
-            return Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+            return ModelParameters.DefaultPackageSpeed + Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
         }
     }
     
@@ -186,7 +190,7 @@ public class Tile
                 {
                     cameFrom[neighbor] = current;
                     gScores[neighbor] = tentativeGScore;
-                    fScores[neighbor] = tentativeGScore + this.ManhattanDist(goal);
+                    fScores[neighbor] = tentativeGScore + neighbor.ManhattanDist(goal);
                     if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
                 }
             }
