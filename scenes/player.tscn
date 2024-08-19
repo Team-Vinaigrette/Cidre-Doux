@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dy68q3ggsdsai"]
+
+[ext_resource type="Script" path="res://scripts/controller/Player.cs" id="1_gupev"]
+
+[node name="Player" type="Node2D" node_paths=PackedStringArray("Camera")]
+script = ExtResource("1_gupev")
+Camera = NodePath("Camera2D")
+Speed = 500.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
