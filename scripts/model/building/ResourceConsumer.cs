@@ -95,8 +95,8 @@ public class ResourceConsumer: ITurnExecutor, IResourceConsumer
         return true;
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
     {
         // If the consumer is destroyed, do nothing.
         if (IsDestroyed)

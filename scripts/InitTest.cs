@@ -56,8 +56,8 @@ public partial class InitTest : Node2D
 
 		farmTile.AssignPath(new List<Tile>(dynamicPath));
 		Package pack = farmTile.Building.ProducePackage();
-		sawTile.ExecuteTurn();
-		sawTile.ExecuteTurn();
+		sawTile.EndTurn();
+		sawTile.EndTurn();
 		pack.ActionHandler.PerformAction(sawTile);
 
 		while (pack.RemainingPath.Count > 0)

@@ -101,6 +101,14 @@ public class HexMap
         return Map.GetValueOrDefault(location);
     }
 
+    public void EndTurn()
+    {
+        foreach (var keyValuePair in Map)
+        {
+            keyValuePair.Value.EndTurn();
+        }
+    }
+
     /// <summary>
     /// Retrieves the six neighbouring tiles around the given tile.
     /// </summary>

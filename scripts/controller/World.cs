@@ -37,6 +37,27 @@ public partial class World : Node2D
     public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
     private HexMap _map;
+
+    public void SelectTile(ViewTile tile)
+    {
+        if(SelectedTile is not null) SelectedTile.OnTileDeselected();
+        SelectedTile = tile;
+        tile.OnTileSelected();
+    }
+
+    public void ProducePackages()
+    {
+        foreach (var tile in _map.Map)
+        {
+            var package = tile.Value.ProducePackage();
+            if (package is not null) GameController.GetController().AddMessenger(package);
+        }
+    }
+
+    public void EndTurn()
+    {
+        _map.EndTurn();
+    }
     
     /// <summary>
     /// Helper function used to retrieve the <see cref="ViewTile"/> at the given coordinates.
@@ -117,11 +138,9 @@ public partial class World : Node2D
 
         // Get the selected tile.
         var newSelectedTile = GetViewTile(selectedLocation);
-        if (newSelectedTile == SelectedTile) return;
-
-
-        SelectedTile = newSelectedTile;
+        if (newSelectedTile != SelectedTile) SelectTile(newSelectedTile);
+        
         // Send a "hover changed" event.
-        EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
+        // EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
     }
 }

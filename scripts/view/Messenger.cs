@@ -55,7 +55,7 @@ public partial class Messenger : Node2D
         base._Ready();
         
         MessengerPath.GetParent().RemoveChild(MessengerPath);
-        GameController.GetController().World.AddChild(MessengerPath);
+        GameController.GetController().PathLayer.AddChild(MessengerPath);
         
         if (Model.Type == PackageType.Ressource)
         {
@@ -79,7 +79,7 @@ public partial class Messenger : Node2D
 
     public new void QueueFree()
     {
-        GameController.GetController().World.RemoveChild(MessengerPath);
+        GameController.GetController().PathLayer.RemoveChild(MessengerPath);
         base.QueueFree();
     }
     

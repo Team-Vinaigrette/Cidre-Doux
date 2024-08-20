@@ -15,7 +15,7 @@ namespace CidreDoux.scripts.view;
 /// </summary>
 public partial class ViewTile : Node2D
 {
-    private static Vector2 BaseOffset = new Vector2(0, -30);
+    private static readonly Vector2 BaseOffset = new Vector2(0, -30);
     
     /// <summary>
     /// The background polygon of this tile.
@@ -32,6 +32,11 @@ public partial class ViewTile : Node2D
     /// </summary>
     public static World World => GameController.GetController().World;
 
+    [Export] public PackedScene PathScene;
+    [Export] public Color PathPreviewColor;
+    
+    [MaybeNull] public Path ProducerPath;
+    
     /// <summary>
     /// The inner tile model manipulated by this view.
     /// </summary>
@@ -101,6 +106,7 @@ public partial class ViewTile : Node2D
             BuildingSprite.Position = Model.Building.Type == BuildingType.Base ? BaseOffset : Vector2.Zero;
             BuildingSprite.SetRegionRect(TextureCoords.Buildings[Model.Building.Type]);
             BuildingSprite.Visible = true;
+            UpdatePathPreview();
         }
         else BuildingSprite.Visible = false;
     }
@@ -110,8 +116,9 @@ public partial class ViewTile : Node2D
     /// </summary>
     /// <param name="column">The column number of the selected tile.</param>
     /// <param name="row">The row number of the selected tile.</param>
-    private void _OnSelectedTileChange(int column, int row)
+    public void _OnSelectedTileChange(int column, int row)
     {
+        GD.Print($"TileChange({column},{row})");
         // Check if the tile was selected.
         if (!(Model.Location.Column == column && Model.Location.Row == row))
         {
@@ -131,6 +138,31 @@ public partial class ViewTile : Node2D
         }
     }
 
+    public void OnTileSelected()
+    {
+        // GD.Print($"Entered tile({Model.Location})");
+        
+        ChangeTileColor(Colors.RebeccaPurple);
+        if (ProducerPath is not null) ProducerPath.Visible = true;
+        switch (GameController.GetController().CurrentState)
+        {
+            case GameState.Idle: break;
+            case GameState.Build: BuildTileChangeHandler();
+                break;
+            case GameState.AssignPath: AssignPathChangeHandler();
+                break;
+            case GameState.TurnEnd: break;
+        }
+    }
+
+    public void OnTileDeselected()
+    {
+        // GD.Print($"Left tile({Model.Location})");
+        
+        if (ProducerPath is not null) ProducerPath.Visible = false;
+        ChangeTileColor(Colors.White);
+    }
+
     public void BuildTileChangeHandler()
     {
         var controller = GameController.GetController();
@@ -140,8 +172,7 @@ public partial class ViewTile : Node2D
             controller.PathPreviewer.UpdatePath(null);
         }
         else
-        {
-            var preview = controller.World.GetBaseTile().AStar(Model);
+        { var preview = controller.World.GetBaseTile().AStar(Model);
             controller.PathPreviewer.UpdatePath(preview);   
         }
     }
@@ -152,15 +183,42 @@ public partial class ViewTile : Node2D
 
         var previewer = GameController.GetController().PathPreviewer;
         var index = previewer.TilePath.IndexOf(Model);
-        if (index < 0)
+        switch (index)
         {
-            if(previewer.TilePath.Last()?.IsNeighbor(Model) == true) previewer.TilePath.Add(Model);
+            case 0:
+                return;
+            case < 0:
+            {
+                GD.Print($"tile {Model.Location} not in path.");
+                if (previewer.TilePath.Last().IsNeighbor(Model)) previewer.TilePath.Add(Model);
+                else GD.Print($"tile {Model.Location} is not a neighbor of {previewer.TilePath.Last().Location}");
+                break;
+            }
+            default:
+                GD.Print($"tile {Model.Location} already in path");
+                if (index != previewer.TilePath.Count - 1) previewer.TilePath.RemoveRange(index + 1, previewer.TilePath.Count-index-1);
+                break;
         }
-        else previewer.TilePath.RemoveRange(index, previewer.TilePath.Count-index);
 
         previewer.UpdatePath(previewer.TilePath);
     }
 
+    public void UpdatePathPreview()
+    {
+        if (Model.Building is null) return;
+        if (Model.Building.PackageProducer is null) return;
+
+        if (ProducerPath is null)
+        {
+            ProducerPath = PathScene.Instantiate<Path>();
+            ProducerPath.Line.DefaultColor = PathPreviewColor;
+            ProducerPath.Visible = false;
+            GameController.GetController().PathLayer.AddChild(ProducerPath);
+        }
+        
+        ProducerPath.UpdatePath(Model.Building.PackageProducer.Path);
+    }
+    
     /// <summary>
     /// Simple method used to update the color of a Tile.
     /// </summary>
@@ -184,7 +242,6 @@ public partial class ViewTile : Node2D
     /// </summary>
     /// <param name="scene">The <see cref="PackedScene"/> that should be instanced.</param>
     /// <param name="model">The <see cref="Tile"/> that is being represented by this tile.</param>
-    /// <param name="parent">The <see cref="controller.World"/> that this tile will be attached to.</param>
     /// <returns></returns>
     public static ViewTile Instantiate(PackedScene scene, Tile model)
     {
@@ -200,6 +257,12 @@ public partial class ViewTile : Node2D
 
         tile._OnModelUpdate();
         return tile;
+    }
+    
+    public new void QueueFree()
+    {
+        GameController.GetController().PathLayer.RemoveChild(ProducerPath);
+        base.QueueFree();
     }
 
     /// <summary>

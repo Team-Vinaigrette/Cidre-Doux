@@ -14,7 +14,7 @@ public interface IPackageProducer
 {
     /// <summary>
     /// Callback invoked to trigger some internal process and, maybe, produce a new <see cref="Package"/> object.
-    /// This is expected to be called on <see cref="ITurnExecutor.ExecuteTurn"/>.
+    /// This is expected to be called on <see cref="ITurnExecutor.EndTurn"/>.
     /// </summary>
     /// <returns>The <see cref="Package"/> that was generated if applicable.</returns>
     [return: MaybeNull]
@@ -84,7 +84,7 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <returns>The generated <see cref="PackageProducer"/> instance.</returns>
     public static PackageProducer CreateBuildProducer(int delay)
     {
-        return new PackageProducer(PackageType.Ressource, null, delay);
+        return new PackageProducer(PackageType.Build, null, delay);
     }
 
     /// <summary>
@@ -126,8 +126,8 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
         Path = new List<Tile>(path);
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
     {
         if (CanProduce() && TurnCounter > 0) TurnCounter--;
     }

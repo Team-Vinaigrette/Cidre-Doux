@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://rxgdwersj5"]
+[gd_scene load_steps=6 format=3 uid="uid://rxgdwersj5"]
 
 [ext_resource type="Script" path="res://scripts/view/ViewTile.cs" id="1_3u64w"]
 [ext_resource type="Texture2D" uid="uid://bn0x3axnotkn3" path="res://ressources/arrières-plans.png" id="2_anqcc"]
+[ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="2_qte14"]
 [ext_resource type="Texture2D" uid="uid://vhwsapm0c5i3" path="res://ressources/bâtiments.png" id="3_m4wcu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r84na"]
@@ -12,6 +13,8 @@ region = Rect2(0, 0, 400, 400)
 script = ExtResource("1_3u64w")
 Background = NodePath("Hex")
 BuildingSprite = NodePath("Sprite2D")
+PathScene = ExtResource("2_qte14")
+PathPreviewColor = Color(0.368627, 0, 0.054902, 0.631373)
 
 [node name="Hex" type="Polygon2D" parent="."]
 position = Vector2(0, -1)

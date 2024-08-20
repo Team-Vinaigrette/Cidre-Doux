@@ -8,20 +8,28 @@
 [ext_resource type="PackedScene" uid="uid://cqm405hmnshfs" path="res://scenes/path.tscn" id="4_15vc6"]
 [ext_resource type="PackedScene" uid="uid://dfywxgi155v3k" path="res://scenes/buildPanel.tscn" id="4_q00aa"]
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player", "PathPreviewer")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player", "PathLayer", "MessengerLayer", "PathPreviewer")]
 script = ExtResource("1_hm80b")
 MessengerScene = ExtResource("2_fqbkp")
 World = NodePath("World")
 Player = NodePath("Player")
-PathPreviewer = NodePath("PathPreview")
+PathLayer = NodePath("PathLayer")
+MessengerLayer = NodePath("MessengerLayer")
+PathPreviewer = NodePath("PathLayer/PathPreview")
 
 [node name="World" parent="." instance=ExtResource("1_eqon8")]
+
+[node name="MessengerLayer" parent="." instance=ExtResource("1_eqon8")]
+script = null
+
+[node name="PathLayer" parent="." instance=ExtResource("1_eqon8")]
+script = null
+
+[node name="PathPreview" parent="PathLayer" instance=ExtResource("4_15vc6")]
+visible = false
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
 
 [node name="BuildPanel" parent="UI" instance=ExtResource("4_q00aa")]
 
 [node name="Player" parent="." instance=ExtResource("3_6t48a")]
-
-[node name="PathPreview" parent="." instance=ExtResource("4_15vc6")]
-visible = false

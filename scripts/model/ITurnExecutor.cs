@@ -8,5 +8,5 @@ public interface ITurnExecutor
     /// <summary>
     /// Callback used to execute a turn of the simulation.
     /// </summary>
-    public void ExecuteTurn();
+    public void EndTurn();
 }

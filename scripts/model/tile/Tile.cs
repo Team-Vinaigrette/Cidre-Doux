@@ -122,7 +122,7 @@ public partial class Tile: GodotObject, ITurnExecutor
 
         // Compare the locations.
         var relPos = new TileLocation(Location.Column - tile.Location.Column, Location.Row - tile.Location.Row);
-        return Mathf.Abs(Location.Row % 2) == 0 ? OddNeighborsRelativeLocations.Contains(relPos) : EvenNeighborsRelativeLocations.Contains(relPos);
+        return Mathf.Abs(Location.Row % 2) == 0 ? EvenNeighborsRelativeLocations.Contains(relPos) : OddNeighborsRelativeLocations.Contains(relPos);
     }
     public bool HasBuilding()
     {
@@ -168,6 +168,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     public void AssignPath(IEnumerable<Tile> path)
     {
         Building.AssignPath(path);
+        EmitSignal(Tile.SignalName.OnModelUpdate);
     }
 
     /// <summary>
@@ -182,10 +183,20 @@ public partial class Tile: GodotObject, ITurnExecutor
         return Building?.ComputeCrossingCost(baseCost) ?? baseCost;
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    public Package ProducePackage()
     {
-        Building.ExecuteTurn();
+        return Building?.ProducePackage();
+    }
+    
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
+    {
+        if (!HasBuilding()) return;
+        if (Building.IsDestroyed) return;
+        
+        Building.EndTurn();
+
+        if (Building.IsDestroyed) EmitSignal(SignalName.OnModelUpdate);
     }
     
     private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom)

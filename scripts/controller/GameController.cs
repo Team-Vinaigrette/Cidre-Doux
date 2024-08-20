@@ -33,7 +33,10 @@ public partial class GameController : Node
     /// </summary>
     [Export] public Player Player;
 
+    [Export] public Node2D PathLayer;
+    [Export] public Node2D MessengerLayer;
     [Export] public Path PathPreviewer;
+
     public GameState CurrentState { get; private set; }
 
     public Tile ActiveTile = null;
@@ -96,51 +99,66 @@ public partial class GameController : Node
     /// <param name="type"></param>
     public void RequestBuild(BuildingType type)
     {
-        // World.SelectedTile.Model.Build(type);
+        var @base = World.GetBaseTile();
+        @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
+        @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+    }
 
-        var package = new Package(PackageType.Build, new BuildAction(type),
-            World.GetBaseTile().AStar(World.SelectedTile.Model));
+    public void AddMessenger(Package package)
+    {
+        var messenger = Messenger.Instantiate(MessengerScene, package);
+        MessengerLayer.AddChild(messenger);
+    }
+    
+    public void EndTurn()
+    {
+        World.ProducePackages();
         
-        AddChild(Messenger.Instantiate(MessengerScene, package));
-        
-        // var @base = World.GetBaseTile();
-        // @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
-        // @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        foreach (var messenger in MessengerLayer.GetChildren().OfType<Messenger>())
+        {
+            messenger.Walk();
+        }
+
+        World.EndTurn();
     }
 
     public override void _Process(double delta)
     {
-        if (CurrentState == GameState.Idle)
+        switch (CurrentState)
         {
-            if (Input.IsActionJustPressed("space"))
-            {
-                foreach (var messenger in GetChildren().OfType<Messenger>())
-                {
-                    messenger.Walk();
-                }
-            }
+            case GameState.Idle:
+                IdleHandler();
+                break;
+            case GameState.AssignPath:
+                AssignPathHandler();
+                break;
+        }
+    }
 
-            if (Input.IsActionJustPressed("click"))
+    public void IdleHandler()
+    {
+        if (Input.IsActionJustPressed("space")) EndTurn();
+
+        if (Input.IsActionJustPressed("click") && World.SelectedTile.Model.HasBuilding())
+        {
+            if (World.SelectedTile.Model.Building.PackageProducer is not null)
             {
-                if (World.SelectedTile.Model.HasBuilding())
+                if (World.SelectedTile.Model.Building.PackageProducer.PackageType == PackageType.Ressource)
                 {
-                    if (World.SelectedTile.Model.Building.PackageProducer is not null)
-                    {
-                        ActiveTile = World.SelectedTile.Model;
-                        PathPreviewer.UpdatePath(new List<Tile>{ActiveTile});
-                        ChangeState(GameState.AssignPath);
-                    }
+                    ActiveTile = World.SelectedTile.Model;
+                    PathPreviewer.UpdatePath(new List<Tile>{ActiveTile});
+                    ChangeState(GameState.AssignPath);
                 }
             }
         }
+    }
 
-        if (CurrentState == GameState.AssignPath)
+    public void AssignPathHandler()
+    {
+        if (Input.IsActionJustReleased("click"))
         {
-            if (Input.IsActionJustReleased("click"))
-            {
-                ActiveTile.Building.AssignPath(new List<Tile>(PathPreviewer.TilePath));
-                ChangeState(GameState.Idle);
-            }
+            ActiveTile.AssignPath(new List<Tile>(PathPreviewer.TilePath));
+            ChangeState(GameState.Idle);
         }
     }
 }
