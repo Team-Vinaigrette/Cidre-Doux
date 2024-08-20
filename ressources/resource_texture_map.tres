@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=8 format=3 uid="uid://cjsbcdfvdnmy1"]
+[gd_resource type="Resource" script_class="ResourceTextureMap" load_steps=8 format=3 uid="uid://cjsbcdfvdnmy1"]
 
 [ext_resource type="Script" path="res://scripts/resources/ResourceTextureMap.cs" id="1_acl42"]
 [ext_resource type="Texture2D" uid="uid://bq7hgt5mbkeqs" path="res://ressources/ressources.png" id="1_njwux"]

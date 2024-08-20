@@ -34,10 +34,10 @@ public partial class World : Node2D
     /// Bounds of the world.
     /// </summary>
     public Rect2 Bounds => new(
-        -Size * ViewTile.CenterToCenterHorizontalDistance - ViewTile.CenterToCenterHorizontalDistance / 2f,
-        -Size * ViewTile.CenterToCenterVerticalDistance,
-        2 * Size * ViewTile.CenterToCenterHorizontalDistance + ViewTile.CenterToCenterHorizontalDistance,
-        2 * Size * ViewTile.CenterToCenterVerticalDistance
+        -Size * ViewTile.CenterToCenterHorizontalDistance - ViewTile.CenterToCenterHorizontalDistance,
+        -Size * ViewTile.CenterToCenterVerticalDistance - ViewTile.CenterToVertexDistance,
+        2 * (Size + 1) * ViewTile.CenterToCenterHorizontalDistance,
+        2 * Size * ViewTile.CenterToCenterVerticalDistance + ViewTile.VertexToVertexDistance
     );
 
     /// <summary>
@@ -144,5 +144,29 @@ public partial class World : Node2D
         // Get the selected tile.
         var newSelectedTile = GetViewTile(selectedLocation);
         if (newSelectedTile != SelectedTile) SelectTile(newSelectedTile);
+    }
+
+    public void Grow()
+    {
+        if (_map is null)
+        {
+            return;
+        }
+
+        // Grow the map.
+        _map.Grow();
+        Size++;
+
+        // Add the new tiles.
+        foreach(var tile in _map.Map.Values)
+        {
+            // Check if the tile exists.
+            if (_viewTiles.ContainsKey(tile.Location)) continue;
+
+            // Instantiate a new tile.
+            var view = ViewTile.Instantiate(TileScene, tile);
+            _viewTiles.Add(tile.Location, view);
+            AddChild(view);
+        }
     }
 }

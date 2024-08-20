@@ -24,7 +24,7 @@ public partial class GameController : Node
     [MaybeNull] private static GameController _instance;
 
     [Export] public PackedScene MessengerScene;
-    
+
     [Export] public Button EndTurnButton;
     /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
@@ -70,7 +70,7 @@ public partial class GameController : Node
     public BuildingType? SelectedBuildingType { get; private set; } = null;
 
     public double EndturnTimer;
-    
+
     public void SetSelectedBuildingType(BuildingType building)
     {
         SelectedBuildingType = building;
@@ -144,13 +144,13 @@ public partial class GameController : Node
         Debug.Assert(SelectedBuildingType != null, nameof(SelectedBuildingType) + " != null");
         var targetTile = World.SelectedTile.Model;
         var buildingType = (BuildingType)SelectedBuildingType;
-        
+
         if (targetTile.CanPlaceBuilding(buildingType)){
             var @base = World.GetBaseTile();
             @base.Building.PackageProducer.AssignBuildAction(new BuildAction(buildingType));
             @base.AssignPath(@base.AStar(World.SelectedTile.Model));
         }
-        
+
         SelectedBuildingType = null;
         ChangeState(GameState.Idle);
     }
@@ -164,7 +164,7 @@ public partial class GameController : Node
     public void EndTurn()
     {
         if (CurrentState == GameState.TurnEnd) return;
-        
+
         EndturnTimer = double.MaxValue;
         CurrentState = GameState.TurnEnd;
         EndTurnButton.Disabled = true;
@@ -174,7 +174,7 @@ public partial class GameController : Node
         {
             messenger.Walk();
         }
-        
+
         World.EndTurn();
         TurnCounter += 1;
         if (World.GetBaseTile().Building.IsDestroyed) GameManager.GetInstance().EndGame(TurnCounter);
@@ -206,7 +206,7 @@ public partial class GameController : Node
     {
         if (Input.IsActionJustPressed("space")) EndTurn();
 
-        if (Input.IsActionJustPressed("click") && World.SelectedTile.Model.HasBuilding())
+        if (Input.IsActionJustPressed("click") && World.SelectedTile is not null && World.SelectedTile.Model.HasBuilding())
         {
             var building = World.SelectedTile.Model.Building;
             if (building.PackageProducer is not null && !building.IsDestroyed)

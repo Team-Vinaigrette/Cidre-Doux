@@ -47,12 +47,12 @@ public class HexMap
         // Create a new column on each side.
         for (var row = -Size; row <= Size; row++)
         {
-            _GenerateRandomTile(new TileLocation(-Size - 1, row));
+            _GenerateRandomTile(new TileLocation(-Size - 1 - Math.Abs(row) % 2, row));
             _GenerateRandomTile(new TileLocation(+Size + 1, row));
         }
 
         // Create a new row on each side.
-        for (var column = -Size - 1; column <= Size + 1; column++)
+        for (var column = -Size - 1 - Math.Abs(Size + 1) % 2; column <= Size + 1; column++)
         {
             _GenerateRandomTile(new TileLocation(column, -Size - 1));
             _GenerateRandomTile(new TileLocation(column, +Size + 1));
@@ -185,7 +185,7 @@ public class HexMap
 
             for (var column = -Size; column <= Size; column++)
             {
-                
+
                 // If we are at the center of the map, build a base on a grass tile
                 // ELse generate a random tile
                 if (column == 0 && row == 0) _GenerateBaseTile(new TileLocation(column, row));
@@ -209,13 +209,13 @@ public class HexMap
 
         return tile;
     }
-    
+
     private Tile _GenerateBaseTile(TileLocation location)
     {
         // Create the tile.
         var tile = new Tile(location, BackgroundType.Grass, this);
         tile.Build(BuildingType.Base);
-        
+
         // Add the tile to the map.
         Map.Add(location, tile);
 
