@@ -24,6 +24,8 @@ public partial class GameController : Node
     [MaybeNull] private static GameController _instance;
 
     [Export] public PackedScene MessengerScene;
+    
+    [Export] public Button EndTurnButton;
         
     /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
@@ -68,6 +70,8 @@ public partial class GameController : Node
 
     public BuildingType? SelectedBuildingType { get; private set; } = null;
 
+    public double EndturnTimer;
+    
     public void SetSelectedBuildingType(BuildingType building)
     {
         SelectedBuildingType = building;
@@ -77,6 +81,8 @@ public partial class GameController : Node
         PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
         CurrentState = newState;
     }
+
+    public int TurnCounter { get; private set; } = 0;
 
     /// <summary>
     /// Static accessor for the singleton instance.
@@ -158,14 +164,22 @@ public partial class GameController : Node
     
     public void EndTurn()
     {
+        if (CurrentState == GameState.TurnEnd) return;
+        
+        EndturnTimer = double.MaxValue;
+        CurrentState = GameState.TurnEnd;
+        EndTurnButton.Disabled = true;
         World.ProducePackages();
         
         foreach (var messenger in MessengerLayer.GetChildren().OfType<Messenger>())
         {
             messenger.Walk();
         }
-
+        
         World.EndTurn();
+        TurnCounter += 1;
+        if (World.GetBaseTile().Building.IsDestroyed) GameManager.GetInstance().EndGame(TurnCounter);
+        EndturnTimer = .5f;
     }
 
     public override void _Process(double delta)
@@ -177,6 +191,14 @@ public partial class GameController : Node
                 break;
             case GameState.AssignPath:
                 AssignPathHandler();
+                break;
+            case GameState.TurnEnd:
+                EndturnTimer -= delta;
+                if (EndturnTimer < 0)
+                {
+                    EndTurnButton.Disabled = false;
+                    ChangeState(GameState.Idle);
+                }
                 break;
         }
     }

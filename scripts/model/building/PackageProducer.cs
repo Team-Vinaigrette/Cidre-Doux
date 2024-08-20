@@ -114,6 +114,7 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
         {
             Path.Last().ReserveTile();
             PackageAction = null;
+            Path = null;
         }
 
         return res;
@@ -132,7 +133,7 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
     public void EndTurn()
     {
-        if (CanProduce() && TurnCounter > 0) TurnCounter--;
+        if (TurnCounter > 0) TurnCounter--;
     }
 
     /// <summary>
