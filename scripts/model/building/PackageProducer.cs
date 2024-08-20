@@ -14,7 +14,7 @@ public interface IPackageProducer
 {
     /// <summary>
     /// Callback invoked to trigger some internal process and, maybe, produce a new <see cref="Package"/> object.
-    /// This is expected to be called on <see cref="ITurnExecutor.ExecuteTurn"/>.
+    /// This is expected to be called on <see cref="ITurnExecutor.EndTurn"/>.
     /// </summary>
     /// <returns>The <see cref="Package"/> that was generated if applicable.</returns>
     [return: MaybeNull]
@@ -123,11 +123,12 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <param name="path">The new path of the <see cref="PackageProducer"/>.</param>
     public void AssignPath(IEnumerable<Tile> path)
     {
-        Path = new List<Tile>(path);
+        if (path is null) Path = null;
+        else Path = new List<Tile>(path);
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
     {
         if (CanProduce() && TurnCounter > 0) TurnCounter--;
     }

@@ -1,7 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using CidreDoux.scripts.model;
 using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.package.action;
+using CidreDoux.scripts.model.tile;
 using Godot;
 
 namespace CidreDoux.scripts.controller;
@@ -13,6 +18,13 @@ namespace CidreDoux.scripts.controller;
 public partial class GameController : Node
 {
     /// <summary>
+    /// Internal pointer to the <see cref="GameController"/> instance in the <see cref="Tree"/>.
+    /// </summary>
+    [MaybeNull] private static GameController _instance;
+
+    [Export] public PackedScene MessengerScene;
+        
+    /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
     /// </summary>
     [Export] public World World;
@@ -21,6 +33,16 @@ public partial class GameController : Node
     /// Reference to the <see cref="Player"/> instance in the tree.
     /// </summary>
     [Export] public Player Player;
+    
+    /// <summary>
+    /// Layer that should collect all path previewers
+    /// </summary>
+    [Export] public Node2D PathLayer;
+    
+    /// <summary>
+    /// Layer that should collect all messenger objects
+    /// </summary>
+    [Export] public Node2D MessengerLayer;
 
     /// <summary>
     /// Reference to the <see cref="PathPreviewer"/> instance in the tree.
@@ -39,13 +61,13 @@ public partial class GameController : Node
     public GameState CurrentState { get; private set; }
 
     /// <summary>
-    /// Internal pointer to the <see cref="GameController"/> instance in the <see cref="Tree"/>.
+    /// Active tile for AssignPath action
     /// </summary>
-    [MaybeNull] private static GameController _instance;
+    public Tile ActiveTile = null;
 
     public void ChangeState(GameState newState)
     {
-        PathPreviewer.SetVisible(newState == GameState.Build);
+        PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
         CurrentState = newState;
     }
 
@@ -107,10 +129,68 @@ public partial class GameController : Node
     /// <param name="type"></param>
     public void RequestBuild(BuildingType type)
     {
-        World.SelectedTile.Model.Build(type);
-
         var @base = World.GetBaseTile();
         @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
         @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+    }
+
+    public void AddMessenger(Package package)
+    {
+        var messenger = Messenger.Instantiate(MessengerScene, package);
+        MessengerLayer.AddChild(messenger);
+    }
+    
+    public void EndTurn()
+    {
+        World.ProducePackages();
+        
+        foreach (var messenger in MessengerLayer.GetChildren().OfType<Messenger>())
+        {
+            messenger.Walk();
+        }
+
+        World.EndTurn();
+    }
+
+    public override void _Process(double delta)
+    {
+        switch (CurrentState)
+        {
+            case GameState.Idle:
+                IdleHandler();
+                break;
+            case GameState.AssignPath:
+                AssignPathHandler();
+                break;
+        }
+    }
+
+    public void IdleHandler()
+    {
+        if (Input.IsActionJustPressed("space")) EndTurn();
+
+        if (Input.IsActionJustPressed("click") && World.SelectedTile.Model.HasBuilding())
+        {
+            var building = World.SelectedTile.Model.Building;
+            if (building.PackageProducer is not null && !building.IsDestroyed)
+            {
+                if (building.PackageProducer.PackageType == PackageType.Ressource)
+                {
+                    ActiveTile = World.SelectedTile.Model;
+                    PathPreviewer.UpdatePath(new List<Tile>{ActiveTile});
+                    ChangeState(GameState.AssignPath);
+                }
+            }
+        }
+    }
+
+    public void AssignPathHandler()
+    {
+        if (Input.IsActionJustReleased("click"))
+        {
+            if(PathPreviewer.TilePath.Count > 1) ActiveTile.AssignPath(PathPreviewer.TilePath);
+            else ActiveTile.AssignPath(null);
+            ChangeState(GameState.Idle);
+        }
     }
 }

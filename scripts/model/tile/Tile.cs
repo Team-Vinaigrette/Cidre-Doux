@@ -129,7 +129,7 @@ public partial class Tile: GodotObject, ITurnExecutor
 
         // Compare the locations.
         var relPos = new TileLocation(Location.Column - tile.Location.Column, Location.Row - tile.Location.Row);
-        return Mathf.Abs(Location.Row % 2) == 0 ? OddNeighborsRelativeLocations.Contains(relPos) : EvenNeighborsRelativeLocations.Contains(relPos);
+        return Mathf.Abs(Location.Row % 2) == 0 ? EvenNeighborsRelativeLocations.Contains(relPos) : OddNeighborsRelativeLocations.Contains(relPos);
     }
     public bool HasBuilding()
     {
@@ -175,6 +175,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     public void AssignPath(IEnumerable<Tile> path)
     {
         Building.AssignPath(path);
+        EmitSignal(Tile.SignalName.OnModelUpdate);
     }
 
     /// <summary>
@@ -183,16 +184,26 @@ public partial class Tile: GodotObject, ITurnExecutor
     public int ComputeCrossingCost()
     {
         // Get the base cost from the background type.
-        var baseCost = ProjectSettings.GetSettingWithOverride(ModelParameters.BackgroundTypeCrossingCostSettings[Background]).AsInt32();
+        var baseCost = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32() * ProjectSettings.GetSettingWithOverride(ModelParameters.BackgroundTypeCrossingCostSettings[Background]).AsInt32();
 
         // Check if there is a building.
         return Building?.ComputeCrossingCost(baseCost) ?? baseCost;
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    public Package ProducePackage()
     {
-        Building.ExecuteTurn();
+        return Building?.ProducePackage();
+    }
+    
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
+    {
+        if (!HasBuilding()) return;
+        if (Building.IsDestroyed) return;
+        
+        Building.EndTurn();
+
+        if (Building.IsDestroyed) EmitSignal(SignalName.OnModelUpdate);
     }
 
     private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom)
@@ -211,11 +222,13 @@ public partial class Tile: GodotObject, ITurnExecutor
 
     public int ManhattanDist(Tile goal)
     {
+        var integerPrecision = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting)
+            .AsInt32();
         var dx = goal.Location.Column - this.Location.Column;
         var dy = goal.Location.Row - this.Location.Column;
 
-        if (Mathf.Sign(dx) == Mathf.Sign(dy)) return ModelParameters.DefaultPackageSpeed + Mathf.Abs(dx + dy);
-        else return ModelParameters.DefaultPackageSpeed + Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        if (Mathf.Sign(dx) == Mathf.Sign(dy)) return integerPrecision * Mathf.Abs(dx + dy);
+        else return integerPrecision * Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
     }
 
     public List<Tile> AStar(Tile goal)
@@ -224,6 +237,18 @@ public partial class Tile: GodotObject, ITurnExecutor
         {
             GD.PrintErr("Attempted to call AStar on two tiles from different maps");
             return null;
+        }
+
+        int goalcost = goal.ComputeCrossingCost();
+        if (goalcost < 0)
+        {
+            if (!goal.HasBuilding())
+            {
+                GD.PrintErr("Attempted to call AStar on uncrossable tile");
+                return null;
+            }
+
+            goalcost = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32();
         }
 
         var openSet = new List<Tile> { this };
@@ -243,8 +268,8 @@ public partial class Tile: GodotObject, ITurnExecutor
             openSet.Remove(current);
             foreach (var neighbor in current.GetNeighbors())
             {
-                // Cost of entering last tile is always 1 turn
-                var crossingCost = neighbor == goal ? ModelParameters.DefaultPackageSpeed : neighbor.ComputeCrossingCost();
+                // Cost of entering last tile is 1 turn if the tile has a building and blocks traffic
+                var crossingCost = neighbor == goal ? goalcost : neighbor.ComputeCrossingCost();
                 if(crossingCost < 0) continue;
 
                 int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;

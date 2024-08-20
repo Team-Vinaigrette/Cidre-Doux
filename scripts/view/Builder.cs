@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model.building;
+using CidreDoux.scripts.view;
 using CidreDoux.scripts.resources;
 using Godot;
 
@@ -8,6 +9,7 @@ namespace CidreDoux.scripts.view;
 
 public partial class Builder : Control
 {
+	[Export] public Control MyControl;
     /// <summary>
     /// Reference to the object used to render the texture of the building.
     /// </summary>
@@ -22,13 +24,12 @@ public partial class Builder : Control
     /// The type of building built by this controller.
     /// </summary>
     [Export] public BuildingType BuildingType;
-
-    public bool IsHovered { get; private set; }
-    public bool IsDragged { get; private set; }
-    private Vector2 _offset = Vector2.Zero;
-    private Vector2 _startPos = Vector2.Zero;
-
-
+	
+	private bool _isHovered = false;
+	private bool _isDragged = false;
+	private Vector2 _offset = Vector2.Zero;
+	private Vector2 _startPos = Vector2.Zero;
+	
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -36,21 +37,21 @@ public partial class Builder : Control
         MouseExited += HandleMouseExit;
         Texture.SetTexture(TextureMap.GetTextureForBuildingType(BuildingType));
     }
-
+    
     public void HandleMouseEntered()
     {
-        IsHovered = true;
+        _isHovered = true;
     }
 
     public void HandleMouseExit()
     {
-        IsHovered = false;
+        _isHovered = false;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        if (IsDragged)
+        if (_isDragged)
         {
             GlobalPosition = GetGlobalMousePosition() - _offset;
         }
@@ -58,12 +59,12 @@ public partial class Builder : Control
 
     public override void _Input(InputEvent @event)
     {
-        if (!IsHovered) return;
+        if (!_isHovered) return;
         var controller = GameController.GetController();
 
         if (Input.IsActionJustPressed("click"))
         {
-            IsDragged = true;
+            _isDragged = true;
             controller.ChangeState(GameState.Build);
             _offset = GetGlobalMousePosition() - GlobalPosition;
             _startPos = GetPosition();
@@ -73,7 +74,7 @@ public partial class Builder : Control
         {
             controller.RequestBuild(BuildingType);
             Position = _startPos;
-            IsDragged = false;
+            _isDragged = false;
             controller.ChangeState(GameState.Idle);
         }
     }

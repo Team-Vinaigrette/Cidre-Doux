@@ -12,7 +12,7 @@ public static class ModelParameters
     /// <summary>
     /// The default speed for <see cref="package.Package"/>.
     /// </summary>
-    public const int DefaultPackageSpeed = 12;
+    public static readonly StringName DefaultPackageSpeedSetting = new("game/navigation/crossing_costs/integer_precision");
 
     /// <summary>
     /// Dictionary of all the crossing costs by <see cref="BackgroundType"/> variant.

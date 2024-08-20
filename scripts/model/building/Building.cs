@@ -152,12 +152,13 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// <inheritdoc cref="ICrossingCostComputer.ComputeCrossingCost"/>
     public int ComputeCrossingCost(int baseCost)
     {
-        return _crossingCostComputer?.ComputeCrossingCost(ModelParameters.DefaultPackageSpeed) ?? baseCost;
+        return _crossingCostComputer?.ComputeCrossingCost(baseCost) ?? baseCost;
     }
 
     /// <inheritdoc cref="PackageProducer.ProducePackage"/>
     public Package ProducePackage()
     {
+        if (IsDestroyed) return null;
         return PackageProducer?.ProducePackage();
     }
 
@@ -180,15 +181,14 @@ public class Building : ICrossingCostComputer, ITurnExecutor
         PackageProducer.AssignPath(path);
     }
 
-    /// <inheritdoc cref="ITurnExecutor.ExecuteTurn"/>
-    public void ExecuteTurn()
+    /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
+    public void EndTurn()
     {
         // Execute the turn for all the consumers.
         foreach (var consumer in Consumers)
         {
-            consumer.ExecuteTurn();
+            consumer.EndTurn();
         }
-
-        PackageProducer.ExecuteTurn();
+        PackageProducer.EndTurn();
     }
 }

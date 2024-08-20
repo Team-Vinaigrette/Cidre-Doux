@@ -41,15 +41,30 @@ public partial class World : Node2D
     );
 
     /// <summary>
-    /// Signal emitted when the selected tile is changed.
-    /// </summary>
-    [Signal]
-    public delegate void OnSelectedTileChangeEventHandler(int column, int row);
-
-    /// <summary>
     /// <see cref="HexMap"/> object used to store the world map of this view.
     /// </summary>
     private HexMap _map;
+
+    public void SelectTile(ViewTile tile)
+    {
+        if(SelectedTile is not null) SelectedTile.OnTileDeselected();
+        SelectedTile = tile;
+        tile.OnTileSelected();
+    }
+
+    public void ProducePackages()
+    {
+        foreach (var tile in _map.Map)
+        {
+            var package = tile.Value.ProducePackage();
+            if (package is not null) GameController.GetController().AddMessenger(package);
+        }
+    }
+
+    public void EndTurn()
+    {
+        _map.EndTurn();
+    }
 
     /// <summary>
     /// List of all the <see cref="ViewTile"/> stored in the world.
@@ -112,12 +127,7 @@ public partial class World : Node2D
         var selectedLocation = ViewTile.GetHexagonMapCoordinates(ViewTile.FindClosestHexCenter(worldPosition));
 
         // Get the selected tile.
-        SelectedTile = GetViewTile(selectedLocation);
-
-        // Send a "hover changed" event.
-        if (SelectedTile is not null)
-        {
-            EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
-        }
+        var newSelectedTile = GetViewTile(selectedLocation);
+        if (newSelectedTile != SelectedTile) SelectTile(newSelectedTile);
     }
 }

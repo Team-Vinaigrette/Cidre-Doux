@@ -101,6 +101,14 @@ public class HexMap
         return Map.GetValueOrDefault(location);
     }
 
+    public void EndTurn()
+    {
+        foreach (var keyValuePair in Map)
+        {
+            keyValuePair.Value.EndTurn();
+        }
+    }
+
     /// <summary>
     /// Retrieves the six neighbouring tiles around the given tile.
     /// </summary>
@@ -177,14 +185,11 @@ public class HexMap
 
             for (var column = -Size; column <= Size; column++)
             {
-                // Create the tile.
-                var tile = _GenerateRandomTile(new TileLocation(column, row));
-
-                // If we are at the center of the map, build a base here.
-                if (column == 0 && row == 0)
-                {
-                    tile.Build(BuildingType.Base);
-                }
+                
+                // If we are at the center of the map, build a base on a grass tile
+                // ELse generate a random tile
+                if (column == 0 && row == 0) _GenerateBaseTile(new TileLocation(column, row));
+                else _GenerateRandomTile(new TileLocation(column, row));
             }
         }
     }
@@ -199,6 +204,18 @@ public class HexMap
         // Create the tile.
         var tile = new Tile(location, _GenerateRandomBackgroundType(), this);
 
+        // Add the tile to the map.
+        Map.Add(location, tile);
+
+        return tile;
+    }
+    
+    private Tile _GenerateBaseTile(TileLocation location)
+    {
+        // Create the tile.
+        var tile = new Tile(location, BackgroundType.Grass, this);
+        tile.Build(BuildingType.Base);
+        
         // Add the tile to the map.
         Map.Add(location, tile);
 
