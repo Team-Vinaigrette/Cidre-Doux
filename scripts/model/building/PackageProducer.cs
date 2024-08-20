@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.package.action;
 using CidreDoux.scripts.model.tile;
@@ -109,7 +110,9 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
         var res = new Package(PackageType, PackageAction, Path);
         if (PackageType == PackageType.Build)
         {
+            Path.Last().ReserveTile();
             PackageAction = null;
+            Path = null;
         }
 
         return res;
@@ -128,7 +131,7 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
     public void EndTurn()
     {
-        if (CanProduce() && TurnCounter > 0) TurnCounter--;
+        if (TurnCounter > 0) TurnCounter--;
     }
 
     /// <summary>

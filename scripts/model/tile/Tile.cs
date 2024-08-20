@@ -19,6 +19,8 @@ public partial class Tile : GodotObject, ITurnExecutor
     [Signal]
     public delegate void OnModelUpdateEventHandler();
 
+    public bool AwaitsBuilding { get; private set; } = false;
+    
     /// <summary>
     /// The background type of this tile.
     /// </summary>
@@ -143,6 +145,22 @@ public partial class Tile : GodotObject, ITurnExecutor
         return Building is not null;
     }
 
+    public bool CanPlaceBuilding(BuildingType building)
+    {
+        if (HasBuilding()) return false;
+        if (AwaitsBuilding) return false;
+        return ModelParameters.BuildingTypeValidBackgrounds[building].Contains(Background);
+    }
+
+    /// <summary>
+    /// Marks the tile as awaiting a building, therefore another buildaction cannot
+    /// be sent to it.
+    /// </summary>
+    public void ReserveTile()
+    {
+        AwaitsBuilding = true;
+    }
+    
     /// <summary>
     /// Adds a new building to this tile.
     /// </summary>
@@ -248,15 +266,9 @@ public partial class Tile : GodotObject, ITurnExecutor
             return null;
         }
 
-        int goalcost = goal.ComputeCrossingCost();
+        var goalcost = goal.ComputeCrossingCost();
         if (goalcost < 0)
         {
-            if (!goal.HasBuilding())
-            {
-                GD.PrintErr("Attempted to call AStar on uncrossable tile");
-                return null;
-            }
-
             goalcost = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32();
         }
 

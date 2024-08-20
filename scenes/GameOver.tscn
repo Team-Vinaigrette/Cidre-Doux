@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=3 uid="uid://oyrgnkhd4dod"]
+
+[ext_resource type="Script" path="res://scripts/GameOver.cs" id="1_7bs0v"]
+[ext_resource type="Script" path="res://scripts/ReplayButton.cs" id="2_dlcon"]
+[ext_resource type="Script" path="res://scripts/ExitButton.cs" id="3_g5cnn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_v1sn1"]
+font_size = 48
+outline_size = 5
+outline_color = Color(0.0991162, 0, 0.0227188, 1)
+
+[node name="GameOver" type="Node2D" node_paths=PackedStringArray("scoreLabel")]
+script = ExtResource("1_7bs0v")
+scoreLabel = NodePath("CanvasLayer/Control/ScoreLabel")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameOverLabel" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -132.5
+offset_right = 132.5
+offset_bottom = 67.0
+grow_horizontal = 2
+text = "Game over!"
+label_settings = SubResource("LabelSettings_v1sn1")
+horizontal_alignment = 1
+
+[node name="ReplayButton" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 91.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 36
+text = "Play again!"
+script = ExtResource("2_dlcon")
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -178.0
+offset_top = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 36
+text = "Exit game"
+script = ExtResource("3_g5cnn")
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -229.5
+offset_top = -33.5
+offset_right = 229.5
+offset_bottom = 33.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 42
+text = "You lasted <> turns!"
+horizontal_alignment = 1

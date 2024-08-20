@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://du3dwemeed4pr"]
+
+[ext_resource type="Script" path="res://scripts/GameManager.cs" id="1_6oij2"]
+[ext_resource type="PackedScene" uid="uid://dgwoxlr0cvu0u" path="res://scenes/game.tscn" id="2_6sc47"]
+[ext_resource type="Script" path="res://scripts/ReplayButton.cs" id="2_336eg"]
+[ext_resource type="Script" path="res://scripts/ExitButton.cs" id="3_t1o17"]
+[ext_resource type="PackedScene" uid="uid://oyrgnkhd4dod" path="res://scenes/GameOver.tscn" id="3_vskli"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lcy8y"]
+font_size = 48
+outline_size = 5
+outline_color = Color(0.0991162, 0, 0.0227188, 1)
+
+[node name="GameManager" type="Node2D"]
+script = ExtResource("1_6oij2")
+GameScene = ExtResource("2_6sc47")
+GameOverScene = ExtResource("3_vskli")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WelcomeLabel" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -132.5
+offset_right = 132.5
+offset_bottom = 67.0
+grow_horizontal = 2
+text = "Welcome!"
+label_settings = SubResource("LabelSettings_lcy8y")
+horizontal_alignment = 1
+
+[node name="StartButton" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 91.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 36
+text = "Start new game"
+script = ExtResource("2_336eg")
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -178.0
+offset_top = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 36
+text = "Exit"
+script = ExtResource("3_t1o17")

@@ -98,18 +98,19 @@ public partial class Messenger : Node2D
         var crossed_tiles = Model.Walk();
         var tween = GetTree().CreateTween();
         tween.Pause();
-        
+
+        var lastPos = GlobalPosition;
         foreach (var tile in crossed_tiles)
         {
             tween.TweenProperty(this, "global_position", ViewTile.GetHexagonCenterWorldPosition(tile), 0.5f);
+            lastPos = ViewTile.GetHexagonCenterWorldPosition(tile);
         }
-
 
         if (Model.LeftoverMovement != 0)
         {
             var nextTile = Model.RemainingPath.Peek();
             tween.TweenProperty(this, "global_position", 
-                    this.GlobalPosition.Lerp(ViewTile.GetHexagonCenterWorldPosition(nextTile), 0.5f),
+                    lastPos.Lerp(ViewTile.GetHexagonCenterWorldPosition(nextTile), 0.5f),
                 0.5f);
         }
 

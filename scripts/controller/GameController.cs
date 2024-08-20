@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CidreDoux.scripts.model;
@@ -23,7 +24,8 @@ public partial class GameController : Node
     [MaybeNull] private static GameController _instance;
 
     [Export] public PackedScene MessengerScene;
-
+    
+    [Export] public Button EndTurnButton;
     /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
     /// </summary>
@@ -52,7 +54,7 @@ public partial class GameController : Node
     /// <summary>
     /// Reference to the <see cref="BuildPanel"/> instance in the tree.
     /// </summary>
-    [Export] public view.ui.UI Ui;
+    [Export] public view.ui.UiView Ui;
 
     /// <summary>
     /// Current value for the state of the game.
@@ -65,11 +67,21 @@ public partial class GameController : Node
     /// </summary>
     public Tile ActiveTile = null;
 
+    public BuildingType? SelectedBuildingType { get; private set; } = null;
+
+    public double EndturnTimer;
+    
+    public void SetSelectedBuildingType(BuildingType building)
+    {
+        SelectedBuildingType = building;
+    }
     public void ChangeState(GameState newState)
     {
         PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
         CurrentState = newState;
     }
+
+    public int TurnCounter { get; private set; } = 0;
 
     /// <summary>
     /// Static accessor for the singleton instance.
@@ -127,11 +139,20 @@ public partial class GameController : Node
     /// Configures the base to send a build package at the end of the turn
     /// </summary>
     /// <param name="type"></param>
-    public void RequestBuild(BuildingType type)
+    public void RequestBuild()
     {
-        var @base = World.GetBaseTile();
-        @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
-        @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        Debug.Assert(SelectedBuildingType != null, nameof(SelectedBuildingType) + " != null");
+        var targetTile = World.SelectedTile.Model;
+        var buildingType = (BuildingType)SelectedBuildingType;
+        
+        if (targetTile.CanPlaceBuilding(buildingType)){
+            var @base = World.GetBaseTile();
+            @base.Building.PackageProducer.AssignBuildAction(new BuildAction(buildingType));
+            @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        }
+        
+        SelectedBuildingType = null;
+        ChangeState(GameState.Idle);
     }
 
     public void AddMessenger(Package package)
@@ -142,14 +163,22 @@ public partial class GameController : Node
 
     public void EndTurn()
     {
+        if (CurrentState == GameState.TurnEnd) return;
+        
+        EndturnTimer = double.MaxValue;
+        CurrentState = GameState.TurnEnd;
+        EndTurnButton.Disabled = true;
         World.ProducePackages();
 
         foreach (var messenger in MessengerLayer.GetChildren().OfType<Messenger>())
         {
             messenger.Walk();
         }
-
+        
         World.EndTurn();
+        TurnCounter += 1;
+        if (World.GetBaseTile().Building.IsDestroyed) GameManager.GetInstance().EndGame(TurnCounter);
+        EndturnTimer = .5f;
     }
 
     public override void _Process(double delta)
@@ -161,6 +190,14 @@ public partial class GameController : Node
                 break;
             case GameState.AssignPath:
                 AssignPathHandler();
+                break;
+            case GameState.TurnEnd:
+                EndturnTimer -= delta;
+                if (EndturnTimer < 0)
+                {
+                    EndTurnButton.Disabled = false;
+                    ChangeState(GameState.Idle);
+                }
                 break;
         }
     }

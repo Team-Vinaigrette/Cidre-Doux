@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -46,6 +47,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// The <see cref="ICrossingCostComputer"/> instance used to compute the crossing cost over this building.
     /// </summary>
     [MaybeNull] private readonly ICrossingCostComputer _crossingCostComputer;
+
 
     public Building(BuildingType buildingType)
     {

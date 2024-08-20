@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CidreDoux.scripts.controller;
@@ -119,6 +120,7 @@ public partial class ViewTile : Node2D
             BuildingSprite.Modulate = BuildingDestroyedColor;
             InputTurnCounter.Visible = false;
             OutputTurnCounter.Visible = false;
+            UpdatePathPreview();
             return;
         }
 
@@ -189,8 +191,8 @@ public partial class ViewTile : Node2D
     public void BuildTileChangeHandler()
     {
         var controller = GameController.GetController();
-        if (Model.HasBuilding())
-        {
+        Debug.Assert(controller.SelectedBuildingType != null, "controller.SelectedBuildingType != null");
+        if (!Model.CanPlaceBuilding((BuildingType)controller.SelectedBuildingType)){
             ChangeTileColor(Colors.Red);
             controller.PathPreviewer.UpdatePath(null);
         }
@@ -213,7 +215,7 @@ public partial class ViewTile : Node2D
                 GD.Print($"tile {Model.Location} not in path.");
                 var last = previewer.TilePath.Last();
                 var lastCrossable = last;
-                if (last.ComputeCrossingCost() < 0) lastCrossable = previewer.TilePath[^2];
+                if (last.ComputeCrossingCost() < 0 && previewer.TilePath.Count > 1) lastCrossable = previewer.TilePath[^2];
                 if (lastCrossable.IsNeighbor(Model))
                 {
                     if (last != lastCrossable) previewer.TilePath.Remove(last);

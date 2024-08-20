@@ -65,6 +65,7 @@ public partial class Builder : Control
         if (Input.IsActionJustPressed("click"))
         {
             _isDragged = true;
+            controller.SetSelectedBuildingType(BuildingType);
             controller.ChangeState(GameState.Build);
             _offset = GetGlobalMousePosition() - GlobalPosition;
             _startPos = GetPosition();
@@ -72,10 +73,9 @@ public partial class Builder : Control
 
         if (Input.IsActionJustReleased("click"))
         {
-            controller.RequestBuild(BuildingType);
+            controller.RequestBuild();
             Position = _startPos;
             _isDragged = false;
-            controller.ChangeState(GameState.Idle);
         }
     }
 }
