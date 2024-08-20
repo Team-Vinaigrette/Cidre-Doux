@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/view/ui/ConsumesInfo.cs" id="1_36l4i"]
 [ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="1_gttuo"]
-[ext_resource type="Resource" uid="uid://x5ptsduv5xwd" path="res://ressources/resource_texture_map.tres" id="2_igqcr"]
+[ext_resource type="Resource" uid="uid://cjsbcdfvdnmy1" path="res://ressources/resource_texture_map.tres" id="2_igqcr"]
 
 [node name="Consumes Info" type="HBoxContainer" node_paths=PackedStringArray("Amount", "TurnCounter", "TextureRect")]
 theme_override_constants/separation = 16

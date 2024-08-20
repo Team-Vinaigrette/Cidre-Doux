@@ -48,6 +48,18 @@ public partial class Player : Node2D
     /// </summary>
     private bool _isMouseInWindow;
 
+    /// <summary>
+    /// Grows the maximum camera size to a new maximum.
+    /// </summary>
+    public void Grow()
+    {
+        // Get the size of the world.
+        var size = GameController.GetController().World.Size;
+
+        // Convert the world size to a new camera zoom.
+
+    }
+
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
     {

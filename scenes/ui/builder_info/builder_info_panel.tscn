@@ -4,7 +4,7 @@
 [ext_resource type="Resource" uid="uid://bk5rt1twr67sh" path="res://ressources/building_texture_map.tres" id="2_3bnvf"]
 [ext_resource type="PackedScene" uid="uid://8d6gcr4ho1i3" path="res://scenes/ui/building_info/consumes_info.tscn" id="3_rgjak"]
 [ext_resource type="Script" path="res://scripts/view/ui/ProducesContainer.cs" id="4_ne4vl"]
-[ext_resource type="Resource" uid="uid://x5ptsduv5xwd" path="res://ressources/resource_texture_map.tres" id="5_amq2r"]
+[ext_resource type="Resource" uid="uid://cjsbcdfvdnmy1" path="res://ressources/resource_texture_map.tres" id="5_amq2r"]
 [ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="6_6ls3w"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_fiebo"]

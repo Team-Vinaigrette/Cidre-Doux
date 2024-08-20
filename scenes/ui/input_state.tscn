@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmnqsgm244xq0"]
+[gd_scene load_steps=6 format=3 uid="uid://cmnqsgm244xq0"]
 
-[ext_resource type="Theme" uid="uid://cc4uhsggkoy4f" path="res://ui/default_theme.tres" id="1_7iq6c"]
+[ext_resource type="Theme" uid="uid://dge4ta27uf4xc" path="res://ui/default_theme.tres" id="1_7iq6c"]
 [ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="1_oknpm"]
 [ext_resource type="Script" path="res://scripts/view/ui/ValidatedTurnCounter.cs" id="2_g7gvv"]
+[ext_resource type="Theme" uid="uid://uai5f3wunomw" path="res://ui/building_theme.tres" id="4_aojqo"]
 
 [sub_resource type="Theme" id="Theme_6ks52"]
 
@@ -51,7 +52,7 @@ offset_right = 20.0
 offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("1_7iq6c")
+theme = ExtResource("4_aojqo")
 theme_type_variation = &"TurnCounter"
 text = "1
 "

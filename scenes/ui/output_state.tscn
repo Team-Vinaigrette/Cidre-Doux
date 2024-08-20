@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dsnfkdejxlv45"]
 
 [ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="1_iyrqe"]
-[ext_resource type="Theme" uid="uid://cc4uhsggkoy4f" path="res://ui/default_theme.tres" id="1_xf6g7"]
+[ext_resource type="Theme" uid="uid://dge4ta27uf4xc" path="res://ui/default_theme.tres" id="1_xf6g7"]
 [ext_resource type="Script" path="res://scripts/view/ui/TurnCounter.cs" id="2_auqiu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_vbr1f"]
