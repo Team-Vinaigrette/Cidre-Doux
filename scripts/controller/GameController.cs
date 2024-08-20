@@ -13,11 +13,6 @@ namespace CidreDoux.scripts.controller;
 public partial class GameController : Node
 {
     /// <summary>
-    /// Internal pointer to the <see cref="GameController"/> instance in the <see cref="Tree"/>.
-    /// </summary>
-    [MaybeNull] private static GameController _instance;
-
-    /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
     /// </summary>
     [Export] public World World;
@@ -27,15 +22,33 @@ public partial class GameController : Node
     /// </summary>
     [Export] public Player Player;
 
+    /// <summary>
+    /// Reference to the <see cref="PathPreviewer"/> instance in the tree.
+    /// </summary>
     [Export] public Path PathPreviewer;
+
+    /// <summary>
+    /// Reference to the <see cref="BuildPanel"/> instance in the tree.
+    /// </summary>
+    [Export] public BuildPanel Ui;
+
+    /// <summary>
+    /// Current value for the state of the game.
+    /// </summary>
+    /// <seealso cref="GameState"/>
     public GameState CurrentState { get; private set; }
+
+    /// <summary>
+    /// Internal pointer to the <see cref="GameController"/> instance in the <see cref="Tree"/>.
+    /// </summary>
+    [MaybeNull] private static GameController _instance;
 
     public void ChangeState(GameState newState)
     {
         PathPreviewer.SetVisible(newState == GameState.Build);
         CurrentState = newState;
     }
-    
+
     /// <summary>
     /// Static accessor for the singleton instance.
     /// </summary>
@@ -50,6 +63,12 @@ public partial class GameController : Node
         }
 
         return _instance;
+    }
+
+    /// <inheritdoc cref="Node._Ready"/>
+    public override void _Ready()
+    {
+        ChangeState(GameState.Idle);
     }
 
     /// <inheritdoc cref="Node._Notification"/>.
@@ -81,7 +100,7 @@ public partial class GameController : Node
             break;
         }
     }
-    
+
     /// <summary>
     /// Configures the base to send a build package at the end of the turn
     /// </summary>

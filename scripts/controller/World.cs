@@ -29,15 +29,33 @@ public partial class World : Node2D
     /// </summary>
     [MaybeNull]
     public ViewTile SelectedTile { get; private set; }
-    
+
+    /// <summary>
+    /// Bounds of the world.
+    /// </summary>
+    public Rect2 Bounds => new(
+        -Size * ViewTile.CenterToCenterHorizontalDistance - ViewTile.CenterToCenterHorizontalDistance / 2f,
+        -Size * ViewTile.CenterToCenterVerticalDistance,
+        2 * Size * ViewTile.CenterToCenterHorizontalDistance + ViewTile.CenterToCenterHorizontalDistance,
+        2 * Size * ViewTile.CenterToCenterVerticalDistance
+    );
+
     /// <summary>
     /// Signal emitted when the selected tile is changed.
     /// </summary>
     [Signal]
     public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
+    /// <summary>
+    /// <see cref="HexMap"/> object used to store the world map of this view.
+    /// </summary>
     private HexMap _map;
-    
+
+    /// <summary>
+    /// List of all the <see cref="ViewTile"/> stored in the world.
+    /// </summary>
+    private Dictionary<TileLocation, ViewTile> _viewTiles;
+
     /// <summary>
     /// Helper function used to retrieve the <see cref="ViewTile"/> at the given coordinates.
     /// </summary>
@@ -45,31 +63,9 @@ public partial class World : Node2D
     /// <returns>The requested <see cref="ViewTile"/> or null if the tile was not found.</returns>
     public ViewTile GetViewTile(TileLocation location)
     {
-        // Convert the column and row into an index.
-        var column = location.Column + Size;
-        var row = location.Row + Size;
-        var index = row * (2 * Size + 1) + column;
-
-        // Get the child at the specified location.
-        var children = GetChildren();
-        if (index < 0 || index >= children.Count)
-        {
-            GD.PrintErr($"Tried to access a ViewTile at {location} that does not exist");
-            return null;
-        }
-        var node = children[index];
-
-        // Check if the node is a ViewTile instance.
-        if (node is ViewTile tile)
-        {
-            return tile;
-        }
-
-        // Print an error to the console.
-        GD.PrintErr($"Found a child at index {index} that was not a ViewTile!");
-        return null;
+        return _viewTiles.GetValueOrDefault(location);
     }
-    
+
     /// <summary>
     /// Return the center tile of the map that contains the player's base
     /// </summary>
@@ -79,8 +75,6 @@ public partial class World : Node2D
         return _map.GetTile(0, 0);
     }
 
-
-    
     /// <inheritdoc cref="Node._Ready"/>
     public override void _Ready()
     {
@@ -93,13 +87,15 @@ public partial class World : Node2D
 
         // Initialize a new HexMap.
         _map = new HexMap(Size);
+        _viewTiles = new Dictionary<TileLocation, ViewTile>();
 
         // Create the ViewTiles for all the elements in the hex map.
         foreach(var tile in _map.Map.Values)
         {
             // Instantiate a new tile.
-            AddChild(ViewTile.Instantiate(TileScene, tile));
-            
+            var view = ViewTile.Instantiate(TileScene, tile);
+            _viewTiles.Add(tile.Location, view);
+            AddChild(view);
         }
     }
 
@@ -119,6 +115,9 @@ public partial class World : Node2D
         SelectedTile = GetViewTile(selectedLocation);
 
         // Send a "hover changed" event.
-        EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
+        if (SelectedTile is not null)
+        {
+            EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
+        }
     }
 }
