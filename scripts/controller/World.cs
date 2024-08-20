@@ -90,8 +90,10 @@ public partial class World : Node2D
         return _map.GetTile(0, 0);
     }
 
-    /// <inheritdoc cref="Node._Ready"/>
-    public override void _Ready()
+    /// <summary>
+    /// Re-generates a map of tiles.
+    /// </summary>
+    public void Generate()
     {
         // Check if the tile scene was set.
         if (TileScene == null)
@@ -112,6 +114,12 @@ public partial class World : Node2D
             _viewTiles.Add(tile.Location, view);
             AddChild(view);
         }
+    }
+
+    /// <inheritdoc cref="Node._Ready"/>
+    public override void _Ready()
+    {
+        Generate();
     }
 
     /// <inheritdoc cref="Node._Process"/>
