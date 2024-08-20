@@ -26,7 +26,6 @@ public partial class GameController : Node
     [Export] public PackedScene MessengerScene;
     
     [Export] public Button EndTurnButton;
-        
     /// <summary>
     /// Reference to the <see cref="World"/> instance in the tree.
     /// </summary>
@@ -36,12 +35,12 @@ public partial class GameController : Node
     /// Reference to the <see cref="Player"/> instance in the tree.
     /// </summary>
     [Export] public Player Player;
-    
+
     /// <summary>
     /// Layer that should collect all path previewers
     /// </summary>
     [Export] public Node2D PathLayer;
-    
+
     /// <summary>
     /// Layer that should collect all messenger objects
     /// </summary>
@@ -55,7 +54,7 @@ public partial class GameController : Node
     /// <summary>
     /// Reference to the <see cref="BuildPanel"/> instance in the tree.
     /// </summary>
-    [Export] public BuildPanel Ui;
+    [Export] public view.ui.UiView Ui;
 
     /// <summary>
     /// Current value for the state of the game.
@@ -161,7 +160,7 @@ public partial class GameController : Node
         var messenger = Messenger.Instantiate(MessengerScene, package);
         MessengerLayer.AddChild(messenger);
     }
-    
+
     public void EndTurn()
     {
         if (CurrentState == GameState.TurnEnd) return;
@@ -170,7 +169,7 @@ public partial class GameController : Node
         CurrentState = GameState.TurnEnd;
         EndTurnButton.Disabled = true;
         World.ProducePackages();
-        
+
         foreach (var messenger in MessengerLayer.GetChildren().OfType<Messenger>())
         {
             messenger.Walk();

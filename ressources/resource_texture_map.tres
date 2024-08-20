@@ -1,0 +1,32 @@
+[gd_resource type="Resource" load_steps=8 format=3 uid="uid://cjsbcdfvdnmy1"]
+
+[ext_resource type="Script" path="res://scripts/resources/ResourceTextureMap.cs" id="1_acl42"]
+[ext_resource type="Texture2D" uid="uid://bq7hgt5mbkeqs" path="res://ressources/ressources.png" id="1_njwux"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_irj5k"]
+atlas = ExtResource("1_njwux")
+region = Rect2(80, 520, 120, 90)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1y0lb"]
+atlas = ExtResource("1_njwux")
+region = Rect2(360, 320, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4yw5k"]
+atlas = ExtResource("1_njwux")
+region = Rect2(350, 130, 100, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iefvg"]
+atlas = ExtResource("1_njwux")
+region = Rect2(90, 310, 110, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8lj0a"]
+atlas = ExtResource("1_njwux")
+region = Rect2(80, 120, 120, 90)
+
+[resource]
+script = ExtResource("1_acl42")
+Food = SubResource("AtlasTexture_irj5k")
+Gold = SubResource("AtlasTexture_1y0lb")
+Wood = SubResource("AtlasTexture_8lj0a")
+Wheat = SubResource("AtlasTexture_iefvg")
+Stone = SubResource("AtlasTexture_4yw5k")

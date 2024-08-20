@@ -9,4 +9,3 @@ EdgeScrollingThreshold = 100
 Speed = 500.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position_smoothing_enabled = true

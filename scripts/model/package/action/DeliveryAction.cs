@@ -1,4 +1,5 @@
 using CidreDoux.scripts.model.tile;
+using CidreDoux.scripts.resources.parameters.building;
 
 namespace CidreDoux.scripts.model.package.action;
 
@@ -10,21 +11,23 @@ public class DeliveryAction: IPackageAction
     /// <summary>
     /// The type of resource being delivered.
     /// </summary>
-    public readonly ResourceType ResourceType;
+    public readonly DeliveryBuildingParameters Parameters;
+
+    public ResourceType ResourceType => Parameters.ProducedResource;
 
     /// <summary>
     /// Class constructor.
     /// </summary>
     /// <param name="resourceType">The type of resource being delivered.</param>
-    public DeliveryAction(ResourceType resourceType)
+    public DeliveryAction(DeliveryBuildingParameters parameters)
     {
-        ResourceType = resourceType;
+        Parameters = parameters;
     }
 
     /// <inheritdoc cref="IPackageAction.PerformAction"/>
     public void PerformAction(Tile targetTile)
     {
         // Make the tile consume the resource.
-        targetTile.Consume(ResourceType);
+        targetTile.Consume(Parameters.ProducedResource);
     }
 }
