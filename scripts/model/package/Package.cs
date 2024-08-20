@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CidreDoux.scripts.model.package.action;
 using CidreDoux.scripts.model.tile;
+using Godot;
 
 namespace CidreDoux.scripts.model.package;
 
@@ -55,7 +56,7 @@ public class Package
         // The starting tile does not need to be crossed
         RemainingPath.Dequeue();
         
-        Speed = ModelParameters.DefaultPackageSpeed;
+        Speed = 1;
         ActionHandler = actionHandler;
         LeftoverMovement = 0;
     }
@@ -67,7 +68,7 @@ public class Package
     public IEnumerable<Tile> Walk()
     {
         // Store the distance that can still be walked by this package during this game turn.
-        var remainingDistance = Speed;
+        var remainingDistance = Speed * ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32();
 
         // Iterate until there is some remaining speed and a path to traverse.
         while (remainingDistance > 0 && RemainingPath.Count > 0)

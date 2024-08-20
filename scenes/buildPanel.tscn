@@ -1,43 +1,55 @@
-[gd_scene load_steps=2 format=3 uid="uid://dfywxgi155v3k"]
+[gd_scene load_steps=5 format=3 uid="uid://cfkwsftgfxnur"]
 
-[ext_resource type="PackedScene" uid="uid://qb4burus8olj" path="res://scenes/builder.tscn" id="1_3vned"]
+[ext_resource type="PackedScene" uid="uid://d35k6en7mb3ey" path="res://scenes/builder.tscn" id="1_3vned"]
+[ext_resource type="Script" path="res://scripts/view/ui/BuildPanel.cs" id="1_tj4gd"]
 
-[node name="BuildPanel" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iv0o5"]
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
-color = Color(0.838502, 0.697598, 0.748888, 1)
-polygon = PackedVector2Array(0, 0, 600, 0, 600, 200, 0, 200)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y0jky"]
+corner_radius_top_left = 64
+corner_radius_top_right = 64
+corner_radius_bottom_right = 64
+corner_radius_bottom_left = 64
 
-[node name="Builder" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(12, 9)
-scale = Vector2(0.2, 0.2)
+[node name="Build Panel" type="PanelContainer"]
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_iv0o5")
+script = ExtResource("1_tj4gd")
 
-[node name="Builder2" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(109, 9)
-scale = Vector2(0.2, 0.2)
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y0jky")
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Field Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
+BuildingType = 0
+
+[node name="Farm Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 BuildingType = 1
 
-[node name="Builder3" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(211, 9)
-scale = Vector2(0.2, 0.2)
+[node name="Mine Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 BuildingType = 2
 
-[node name="Builder4" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(306, 9)
-scale = Vector2(0.2, 0.2)
-BuildingType = 3
+[node name="Sawmill Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 
-[node name="Builder5" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(406, 9)
-scale = Vector2(0.2, 0.2)
+[node name="Harbor Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 BuildingType = 4
 
-[node name="Builder6" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(506, 9)
-scale = Vector2(0.2, 0.2)
+[node name="Market Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 BuildingType = 5
 
-[node name="Builder7" parent="." instance=ExtResource("1_3vned")]
-position = Vector2(13, 105)
-scale = Vector2(0.2, 0.2)
+[node name="Road Builder" parent="Container" instance=ExtResource("1_3vned")]
+layout_mode = 2
 BuildingType = 6

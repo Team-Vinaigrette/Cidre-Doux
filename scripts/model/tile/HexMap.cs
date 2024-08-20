@@ -175,9 +175,15 @@ public class HexMap
         Map.Clear();
 
         // Initialize the tiles.
-        for (var column = -Size; column <= Size; column++)
+        for (var row = -Size; row <= Size; row++)
         {
-            for (var row = -Size; row <= Size; row++)
+            // Create an extra tile if this is an odd row.
+            if (row % 2 != 0)
+            {
+                _GenerateRandomTile(new TileLocation(-Size - 1, row));
+            }
+
+            for (var column = -Size; column <= Size; column++)
             {
                 
                 // If we are at the center of the map, build a base on a grass tile

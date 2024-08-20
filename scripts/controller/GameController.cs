@@ -33,21 +33,44 @@ public partial class GameController : Node
     /// Reference to the <see cref="Player"/> instance in the tree.
     /// </summary>
     [Export] public Player Player;
-
+    
+    /// <summary>
+    /// Layer that should collect all path previewers
+    /// </summary>
     [Export] public Node2D PathLayer;
+    
+    /// <summary>
+    /// Layer that should collect all messenger objects
+    /// </summary>
     [Export] public Node2D MessengerLayer;
+
+    /// <summary>
+    /// Reference to the <see cref="PathPreviewer"/> instance in the tree.
+    /// </summary>
     [Export] public Path PathPreviewer;
 
+    /// <summary>
+    /// Reference to the <see cref="BuildPanel"/> instance in the tree.
+    /// </summary>
+    [Export] public BuildPanel Ui;
+
+    /// <summary>
+    /// Current value for the state of the game.
+    /// </summary>
+    /// <seealso cref="GameState"/>
     public GameState CurrentState { get; private set; }
 
+    /// <summary>
+    /// Active tile for AssignPath action
+    /// </summary>
     public Tile ActiveTile = null;
-    
+
     public void ChangeState(GameState newState)
     {
         PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
         CurrentState = newState;
     }
-    
+
     /// <summary>
     /// Static accessor for the singleton instance.
     /// </summary>
@@ -62,6 +85,12 @@ public partial class GameController : Node
         }
 
         return _instance;
+    }
+
+    /// <inheritdoc cref="Node._Ready"/>
+    public override void _Ready()
+    {
+        ChangeState(GameState.Idle);
     }
 
     /// <inheritdoc cref="Node._Notification"/>.
@@ -93,7 +122,7 @@ public partial class GameController : Node
             break;
         }
     }
-    
+
     /// <summary>
     /// Configures the base to send a build package at the end of the turn
     /// </summary>

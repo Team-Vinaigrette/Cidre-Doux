@@ -1,78 +1,81 @@
-using Godot;
-using System;
 using System.Collections.Generic;
-using CidreDoux.scripts;
 using CidreDoux.scripts.controller;
-using CidreDoux.scripts.model;
 using CidreDoux.scripts.model.building;
 using CidreDoux.scripts.view;
+using CidreDoux.scripts.resources;
+using Godot;
 
-public partial class Builder : Node2D
+namespace CidreDoux.scripts.view;
+
+public partial class Builder : Control
 {
 	[Export] public Control MyControl;
+    /// <summary>
+    /// Reference to the object used to render the texture of the building.
+    /// </summary>
+    [Export] public TextureRect Texture;
 
-	[Export] public Sprite2D MySprite;
+    /// <summary>
+    /// The texture map used to render the correct texture in this instance.
+    /// </summary>
+    [Export] public BuildingTextureMap TextureMap;
 
-	[Export] public BuildingType BuildingType;
+    /// <summary>
+    /// The type of building built by this controller.
+    /// </summary>
+    [Export] public BuildingType BuildingType;
 	
 	private bool _isHovered = false;
 	private bool _isDragged = false;
 	private Vector2 _offset = Vector2.Zero;
 	private Vector2 _startPos = Vector2.Zero;
 	
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		MyControl.Connect(Control.SignalName.MouseEntered, new Callable(this, MethodName.HandleMouseEntered));
-		MyControl.Connect(Control.SignalName.MouseExited, new Callable(this, MethodName.HandleMouseExit));
-		MySprite.SetRegionRect(TextureCoords.Buildings[BuildingType]);
-	}
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        MouseEntered += HandleMouseEntered;
+        MouseExited += HandleMouseExit;
+        Texture.SetTexture(TextureMap.GetTextureForBuildingType(BuildingType));
+    }
+    
+    public void HandleMouseEntered()
+    {
+        _isHovered = true;
+    }
 
-	public void HandleMouseEntered()
-	{
-		_isHovered = true;
-	}
+    public void HandleMouseExit()
+    {
+        _isHovered = false;
+    }
 
-	public void HandleMouseExit()
-	{
-		_isHovered = false;
-	}
-	
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		if (_isDragged)
-		{
-			GlobalPosition = GetGlobalMousePosition() - _offset;
-		}
-	}
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
+    {
+        if (_isDragged)
+        {
+            GlobalPosition = GetGlobalMousePosition() - _offset;
+        }
+    }
 
-	public override void _Input(InputEvent @event)
-	{
-		if (!_isHovered) return;
-		var controller = GameController.GetController();
+    public override void _Input(InputEvent @event)
+    {
+        if (!_isHovered) return;
+        var controller = GameController.GetController();
 
-		if (controller.CurrentState == GameState.Idle)
-		{
+        if (Input.IsActionJustPressed("click"))
+        {
+            _isDragged = true;
+            controller.ChangeState(GameState.Build);
+            _offset = GetGlobalMousePosition() - GlobalPosition;
+            _startPos = GetPosition();
+        }
 
-
-			if (Input.IsActionJustPressed("click"))
-			{
-				_isDragged = true;
-				controller.ChangeState(GameState.Build);
-				_offset = GetGlobalMousePosition() - GlobalPosition;
-				_startPos = GetPosition();
-			}
-		}
-		else if (controller.CurrentState == GameState.Build)
-		{
-			if (Input.IsActionJustReleased("click"))
-			{
-				controller.RequestBuild(BuildingType);
-				Position = _startPos;
-				_isDragged = false;
-				controller.ChangeState(GameState.Idle);
-			}
-		}
-	}
+        if (Input.IsActionJustReleased("click"))
+        {
+            controller.RequestBuild(BuildingType);
+            Position = _startPos;
+            _isDragged = false;
+            controller.ChangeState(GameState.Idle);
+        }
+    }
 }

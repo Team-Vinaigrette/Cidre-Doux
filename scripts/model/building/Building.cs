@@ -152,7 +152,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// <inheritdoc cref="ICrossingCostComputer.ComputeCrossingCost"/>
     public int ComputeCrossingCost(int baseCost)
     {
-        return _crossingCostComputer?.ComputeCrossingCost(ModelParameters.DefaultPackageSpeed) ?? baseCost;
+        return _crossingCostComputer?.ComputeCrossingCost(baseCost) ?? baseCost;
     }
 
     /// <inheritdoc cref="PackageProducer.ProducePackage"/>

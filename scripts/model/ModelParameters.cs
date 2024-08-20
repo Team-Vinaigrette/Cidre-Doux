@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CidreDoux.scripts.model.tile;
+using Godot;
 
 namespace CidreDoux.scripts.model;
 
@@ -11,16 +12,16 @@ public static class ModelParameters
     /// <summary>
     /// The default speed for <see cref="package.Package"/>.
     /// </summary>
-    public const int DefaultPackageSpeed = 12;
+    public static readonly StringName DefaultPackageSpeedSetting = new("game/navigation/crossing_costs/integer_precision");
 
     /// <summary>
     /// Dictionary of all the crossing costs by <see cref="BackgroundType"/> variant.
     /// </summary>
-    public static readonly Dictionary<BackgroundType, int> BackgroundTypeCrossingCosts = new()
+    public static readonly Dictionary<BackgroundType, StringName> BackgroundTypeCrossingCostSettings = new()
     {
-        [BackgroundType.Water] = -1,
-        [BackgroundType.Grass] = 1 * DefaultPackageSpeed,
-        [BackgroundType.Forest] = 2 * DefaultPackageSpeed,
-        [BackgroundType.Mountain] = 3 * DefaultPackageSpeed
+        [BackgroundType.Water] = new StringName("game/navigation/crossing_costs/background_type/water"),
+        [BackgroundType.Grass] = new StringName("game/navigation/crossing_costs/background_type/grass"),
+        [BackgroundType.Forest] = new StringName("game/navigation/crossing_costs/background_type/forest"),
+        [BackgroundType.Mountain] = new StringName("game/navigation/crossing_costs/background_type/mountain")
     };
 }
