@@ -61,8 +61,8 @@ public class Building : ICrossingCostComputer, ITurnExecutor
                 PackageProducer.CreateBuildProducer(1),
                 new[]
                 {
-                    new ResourceConsumer(ResourceType.Stone, 1, 5),
-                    new ResourceConsumer(ResourceType.Gold, 1, 20)
+                    new ResourceConsumer(ResourceType.Stone, 1, 25),
+                    new ResourceConsumer(ResourceType.Gold, 1, 50)
                 },
                 new CrossingBlocker()
             );
@@ -182,18 +182,14 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// <inheritdoc cref="PackageProducer.ProducePackage"/>
     public Package ProducePackage()
     {
-        if (IsDestroyed) return null;
-        return PackageProducer?.ProducePackage();
+        return IsDestroyed ? null : PackageProducer?.ProducePackage();
     }
 
     /// <inheritdoc cref="ResourceConsumer.Consume"/>
-    public void Consume(ResourceType resourceType)
+    public bool Consume(ResourceType resourceType)
     {
         // Try to consume the resource.
-        if (!Consumers.Any(consumer => consumer.Consume(resourceType)))
-        {
-            GD.PrintErr($"No consumer found for {resourceType} in {Type}");
-        }
+        return Consumers.Any(consumer => consumer.Consume(resourceType));
     }
 
     /// <summary>
@@ -202,7 +198,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// <param name="path">The path to assign.</param>
     public void AssignPath(IEnumerable<Tile> path)
     {
-        PackageProducer.AssignPath(path);
+        PackageProducer?.AssignPath(path);
     }
 
     /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
@@ -213,6 +209,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
         {
             consumer.EndTurn();
         }
-        PackageProducer.EndTurn();
+
+        PackageProducer?.EndTurn();
     }
 }

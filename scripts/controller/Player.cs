@@ -43,6 +43,19 @@ public partial class Player : Node2D
     /// </summary>
     private static readonly StringName MoveRightInput = new("move_right");
 
+    /// <summary>
+    /// Flag disabled when the mouse is not within the bounds of the game window.
+    /// </summary>
+    private bool _isMouseInWindow;
+
+    /// <inheritdoc cref="Node._Ready"/>
+    public override void _Ready()
+    {
+        // Listen to the mouse entered and exited events.
+        GetWindow().MouseEntered += () => _isMouseInWindow = true;
+        GetWindow().MouseExited += () => _isMouseInWindow = true;
+    }
+
     /// <inheritdoc cref="Node._PhysicsProcess"/>
     public override void _PhysicsProcess(double delta)
     {
@@ -79,6 +92,12 @@ public partial class Player : Node2D
     private Vector2 _HandleEdgeScrolling()
     {
         var movement = Vector2.Zero;
+
+        // Do nothing if the mouse is not inside the current window.
+        if (!GetWindow().GetVisibleRect().HasPoint(GetWindow().GetMousePosition()))
+        {
+            return movement;
+        }
 
         // Get the position of the UI on the screen.
         var uiRect = GameController.GetController().Ui.GetRect();

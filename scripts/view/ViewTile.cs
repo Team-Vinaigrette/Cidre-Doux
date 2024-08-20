@@ -7,6 +7,7 @@ using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model;
 using CidreDoux.scripts.model.building;
 using CidreDoux.scripts.model.tile;
+using CidreDoux.scripts.view.ui;
 using Godot;
 
 namespace CidreDoux.scripts.view;
@@ -17,7 +18,7 @@ namespace CidreDoux.scripts.view;
 public partial class ViewTile : Node2D
 {
     private static readonly Vector2 BaseOffset = new Vector2(0, -30);
-    
+
     /// <summary>
     /// The background polygon of this tile.
     /// </summary>
@@ -27,7 +28,7 @@ public partial class ViewTile : Node2D
     /// The sprite displaying this tile's building
     /// </summary>
     [Export] public Sprite2D BuildingSprite;
-    
+
     /// <summary>
     /// Reference to the <see cref="World"/> that owns this tile.
     /// </summary>
@@ -36,9 +37,11 @@ public partial class ViewTile : Node2D
     [Export] public PackedScene PathScene;
     [Export] public Color PathPreviewColor;
     [Export] public Color BuildingDestroyedColor;
-    
+    [Export] public TurnCounter OutputTurnCounter;
+    [Export] public ValidatedTurnCounter InputTurnCounter;
+
     [MaybeNull] public Path ProducerPath;
-    
+
     /// <summary>
     /// The inner tile model manipulated by this view.
     /// </summary>
@@ -92,7 +95,7 @@ public partial class ViewTile : Node2D
     public override void _Ready()
     {
         base._Ready();
-        
+
         Background.TextureOffset = TextureCoords.Backgrounds[Model.Background];
 
 
@@ -102,24 +105,67 @@ public partial class ViewTile : Node2D
 
     public void _OnModelUpdate()
     {
-        if (Model.HasBuilding())
+        // If the model has no building, hide its sprite and UI elements.
+        if (!Model.HasBuilding())
         {
-            BuildingSprite.Position = Model.Building.Type == BuildingType.Base ? BaseOffset : Vector2.Zero;
-            BuildingSprite.SetRegionRect(TextureCoords.Buildings[Model.Building.Type]);
-            BuildingSprite.Visible = true;
-            if (Model.Building.IsDestroyed)
-            {
-                BuildingSprite.Modulate = BuildingDestroyedColor;
-            }
-            UpdatePathPreview();
+            InputTurnCounter.Visible = false;
+            OutputTurnCounter.Visible = false;
+            BuildingSprite.Visible = false;
+            return;
         }
-        else BuildingSprite.Visible = false;
+
+        // If the building is destroyed, hide the UI.
+        if (Model.Building.IsDestroyed)
+        {
+            BuildingSprite.Modulate = BuildingDestroyedColor;
+            InputTurnCounter.Visible = false;
+            OutputTurnCounter.Visible = false;
+            return;
+        }
+
+        // Place the sprite at the correct location and with the correct texture.
+        BuildingSprite.Position = Model.Building.Type == BuildingType.Base ? BaseOffset : Vector2.Zero;
+        BuildingSprite.SetRegionRect(TextureCoords.Buildings[Model.Building.Type]);
+        BuildingSprite.Visible = true;
+
+        // Find the most urgent consumer.
+        if (Model.Building.Consumers.Count > 0)
+        {
+            var mostUrgentConsumer = Model.Building.Consumers.Aggregate(
+                (accumulator, current) =>
+                {
+                    // Check if the current consumer is invalid.
+                    if (accumulator.IsSatisfied && !current.IsSatisfied)
+                    {
+                        return current;
+                    }
+
+                    // Compare the turns left for each.
+                    return accumulator.TurnsLeft > current.TurnsLeft ? current : accumulator;
+                }
+            );
+
+            // Apply the information from the most urgent consumer.
+            InputTurnCounter.SetCounter(mostUrgentConsumer.TurnsLeft);
+            InputTurnCounter.SetValidity(mostUrgentConsumer.IsSatisfied);
+            InputTurnCounter.Visible = true;
+        }
+
+        // Apply the information from the producer.
+        if (Model.Building.PackageProducer is not null)
+        {
+            OutputTurnCounter.SetCounter(Model.Building.PackageProducer.TurnCounter);
+            OutputTurnCounter.Visible = true;
+        }
+
+        // Update the path preview.
+        UpdatePathPreview();
     }
-   
+
     public void OnTileSelected()
     {
         // GD.Print($"Entered tile({Model.Location})");
-        
+
         ChangeTileColor(Colors.RebeccaPurple);
         if (ProducerPath is not null) ProducerPath.Visible = true;
         switch (GameController.GetController().CurrentState)
@@ -136,7 +182,7 @@ public partial class ViewTile : Node2D
     public void OnTileDeselected()
     {
         // GD.Print($"Left tile({Model.Location})");
-        
+
         if (ProducerPath is not null) ProducerPath.Visible = false;
         ChangeTileColor(Colors.White);
     }
@@ -151,7 +197,7 @@ public partial class ViewTile : Node2D
         }
         else
         { var preview = controller.World.GetBaseTile().AStar(Model);
-            controller.PathPreviewer.UpdatePath(preview);   
+            controller.PathPreviewer.UpdatePath(preview);
         }
     }
 
@@ -191,7 +237,7 @@ public partial class ViewTile : Node2D
         if (Model.Building is null) return;
         if (Model.Building.PackageProducer is null) return;
         if (Model.Building.IsDestroyed && ProducerPath is null) return;
-        
+
         if(Model.Building.IsDestroyed)
         {
             GD.Print("Destroying building path");
@@ -208,10 +254,10 @@ public partial class ViewTile : Node2D
             ProducerPath.Visible = false;
             GameController.GetController().PathLayer.AddChild(ProducerPath);
         }
-        
+
         ProducerPath.UpdatePath(Model.Building.PackageProducer.Path);
     }
-    
+
     /// <summary>
     /// Simple method used to update the color of a Tile.
     /// </summary>
@@ -251,7 +297,7 @@ public partial class ViewTile : Node2D
         tile._OnModelUpdate();
         return tile;
     }
-    
+
     public new void QueueFree()
     {
         GameController.GetController().PathLayer.RemoveChild(ProducerPath);

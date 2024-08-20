@@ -15,4 +15,8 @@
     <Compile Remove="scripts\controller\StateMachine.cs" />
     <Compile Remove="scripts\controller\IdleState.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="addons\" />
+    <Folder Include="scripts\editor\" />
+  </ItemGroup>
 </Project>
