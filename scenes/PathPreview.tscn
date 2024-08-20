@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://blgfq16h0ws4f"]
+
+[ext_resource type="Script" path="res://scripts/view/ui/PathPreview.cs" id="1_c33cl"]
+[ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="1_n08ie"]
+
+[node name="Control" type="PanelContainer" node_paths=PackedStringArray("MessengerLabel")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1217.0
+offset_bottom = -680.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_c33cl")
+MessengerLabel = NodePath("HBoxContainer/Turn Count")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Turn Count" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Turn Icon" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("1_n08ie")
+expand_mode = 3

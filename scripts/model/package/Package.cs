@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CidreDoux.scripts.model.package.action;
 using CidreDoux.scripts.model.tile;
 using Godot;
@@ -59,6 +60,17 @@ public class Package
         Speed = 1;
         ActionHandler = actionHandler;
         LeftoverMovement = 0;
+    }
+
+    public int GetRemainingPathDuration()
+    {
+        int res = -LeftoverMovement;
+        foreach (var tile in RemainingPath.ToArray())
+        {
+            res += tile.ComputeCrossingCost();
+        }
+        
+        return (int)Math.Ceiling(res / (double)ModelParameters.DefaultPackageSpeed);
     }
 
     /// <summary>
