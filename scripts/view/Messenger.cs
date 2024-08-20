@@ -86,10 +86,12 @@ public partial class Messenger : Node2D
     public void HandleMouseEntered()
     {
         MessengerPath.Visible = true;
+        GameController.GetController().Ui.PathPreview.RequestDisplay(this);
     }
 
     public void HandleMouseExited()
     {
+        GameController.GetController().Ui.PathPreview.EndDisplay(this);
         MessengerPath.Visible = false;
     }
 

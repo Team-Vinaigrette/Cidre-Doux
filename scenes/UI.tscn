@@ -1,13 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://de72ehimbx7oa"]
+[gd_scene load_steps=5 format=3 uid="uid://de72ehimbx7oa"]
 
 [ext_resource type="Script" path="res://scripts/view/ui/UiView.cs" id="1_pp5au"]
 [ext_resource type="PackedScene" uid="uid://d3tl7fc3mtv2v" path="res://scenes/ui/building_info/building_info_panel.tscn" id="2_k4ina"]
 [ext_resource type="PackedScene" uid="uid://cfkwsftgfxnur" path="res://scenes/buildPanel.tscn" id="3_x1kko"]
+[ext_resource type="PackedScene" uid="uid://blgfq16h0ws4f" path="res://scenes/PathPreview.tscn" id="4_vbxui"]
 
-[node name="UI" type="CanvasLayer" node_paths=PackedStringArray("InfoPanel", "BuildPanel")]
+[node name="UI" type="CanvasLayer" node_paths=PackedStringArray("InfoPanel", "BuildPanel", "PathPreview")]
 script = ExtResource("1_pp5au")
 InfoPanel = NodePath("Building Info Panel")
 BuildPanel = NodePath("Build Panel")
+PathPreview = NodePath("PathPreview")
 
 [node name="Building Info Panel" parent="." instance=ExtResource("2_k4ina")]
 visible = false
@@ -17,3 +19,6 @@ offset_right = 823.074
 offset_bottom = 407.742
 
 [node name="Build Panel" parent="." instance=ExtResource("3_x1kko")]
+
+[node name="PathPreview" parent="." instance=ExtResource("4_vbxui")]
+visible = false
