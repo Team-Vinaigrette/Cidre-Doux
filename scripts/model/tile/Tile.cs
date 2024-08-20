@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CidreDoux.scripts.controller;
 using CidreDoux.scripts.model.building;
 using CidreDoux.scripts.model.package;
 using Godot;
@@ -20,7 +21,7 @@ public partial class Tile : GodotObject, ITurnExecutor
     public delegate void OnModelUpdateEventHandler();
 
     public bool AwaitsBuilding { get; private set; } = false;
-    
+
     /// <summary>
     /// The background type of this tile.
     /// </summary>
@@ -160,7 +161,7 @@ public partial class Tile : GodotObject, ITurnExecutor
     {
         AwaitsBuilding = true;
     }
-    
+
     /// <summary>
     /// Adds a new building to this tile.
     /// </summary>
@@ -177,6 +178,19 @@ public partial class Tile : GodotObject, ITurnExecutor
         // Add the building.
         GD.Print($"Tile {Location} has a new {buildingType} {nameof(Building)}");
         Building = new Building(buildingType);
+
+        // Grow the world if the tile is on one of its edges.
+        var world = GameController.GetController().World;
+        if (Location.Row == -world.Size || Location.Row == +world.Size)
+        {
+            world.Grow();
+        }
+        else if (Location.Column == -world.Size + Mathf.Abs(world.Size) % 2 || Location.Column == world.Size)
+        {
+            world.Grow();
+        }
+
+        // Emit an update signal.
         EmitSignal(Tile.SignalName.OnModelUpdate);
     }
 

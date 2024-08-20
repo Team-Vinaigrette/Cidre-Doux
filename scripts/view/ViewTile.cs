@@ -165,8 +165,6 @@ public partial class ViewTile : Node2D
 
     public void OnTileSelected()
     {
-        // GD.Print($"Entered tile({Model.Location})");
-
         ChangeTileColor(Colors.RebeccaPurple);
         if (ProducerPath is not null) ProducerPath.Visible = true;
         switch (GameController.GetController().CurrentState)
