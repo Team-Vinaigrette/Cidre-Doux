@@ -9,7 +9,6 @@ namespace CidreDoux.scripts.resources;
 [GlobalClass]
 public partial class BuildingTextureMap : Resource
 {
-
     [Export] public Texture2D Field;
     [Export] public Texture2D Farm;
     [Export] public Texture2D Mine;
@@ -21,26 +20,17 @@ public partial class BuildingTextureMap : Resource
 
     public Texture2D GetTextureForBuildingType(BuildingType buildingType)
     {
-        switch (buildingType)
+        return buildingType switch
         {
-        case BuildingType.Field:
-            return Field;
-        case BuildingType.Farm:
-            return Farm;
-        case BuildingType.Mine:
-            return Mine;
-        case BuildingType.Sawmill:
-            return Sawmill;
-        case BuildingType.Harbor:
-            return Harbor;
-        case BuildingType.Market:
-            return Market;
-        case BuildingType.Road:
-            return Road;
-        case BuildingType.Base:
-            return Base;
-        default:
-            return null;
-        }
+            BuildingType.Field => Field,
+            BuildingType.Farm => Farm,
+            BuildingType.Mine => Mine,
+            BuildingType.Sawmill => Sawmill,
+            BuildingType.Harbor => Harbor,
+            BuildingType.Market => Market,
+            BuildingType.Road => Road,
+            BuildingType.Base => Base,
+            _ => null
+        };
     }
 }

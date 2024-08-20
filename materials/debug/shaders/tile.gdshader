@@ -11,10 +11,10 @@ void vertex() {
 void fragment() {
 	// Get the length of the distance to the center.
 	float len = length(to_center);
-	
+
 	// Apply some cutoff to the length.
 	len = (len - 0.75) * 3.;
-	
+
 	// Simply render the distance as a shade of red.
 	COLOR = vec4(1, 1, 1, len) * COLOR;
 }

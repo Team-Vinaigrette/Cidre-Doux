@@ -63,7 +63,7 @@ public partial class Player : Node2D
         var movement = Input.GetVector(MoveLeftInput, MoveRightInput, MoveUpInput, MoveDownInput);
 
         // Enable mouse movements only if the ui is not hovered.
-        if (movement.IsZeroApprox() && !GameController.GetController().Ui.IsHovered)
+        if (movement.IsZeroApprox() && !GameController.GetController().Ui.BuildPanel.IsHovered)
         {
             movement = _HandleEdgeScrolling();
         }
@@ -73,8 +73,8 @@ public partial class Player : Node2D
 
         // Get the actual viewport (minus the Ui) rect.
         var viewportRect = Camera.GetViewportRect();
-        viewportRect = new(
-            new Vector2(GameController.GetController().Ui.GetRect().Size.X, 0),
+        viewportRect = new Rect2(
+            new Vector2(GameController.GetController().Ui.BuildPanel.GetRect().Size.X, 0),
             viewportRect.Size
         );
 
@@ -100,7 +100,7 @@ public partial class Player : Node2D
         }
 
         // Get the position of the UI on the screen.
-        var uiRect = GameController.GetController().Ui.GetRect();
+        var uiRect = GameController.GetController().Ui.BuildPanel.GetRect();
 
         // Get the mouse position on the viewport.
         var mousePosition = GetViewport().GetMousePosition();

@@ -25,7 +25,7 @@ public class Package
     /// Complete path the package will follow
     /// </summary>
     public readonly List<Tile> CompletePath;
-    
+
     /// <summary>
     /// Remaining steps on the package's path
     /// </summary>
@@ -52,10 +52,10 @@ public class Package
         Type = type;
         CompletePath = new List<Tile>(path);
         RemainingPath = new Queue<Tile>(path);
-        
+
         // The starting tile does not need to be crossed
         RemainingPath.Dequeue();
-        
+
         Speed = 1;
         ActionHandler = actionHandler;
         LeftoverMovement = 0;
@@ -68,7 +68,7 @@ public class Package
     public IEnumerable<Tile> Walk()
     {
         // Store the distance that can still be walked by this package during this game turn.
-        var remainingDistance = Speed * ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32();
+        var remainingDistance = Speed * ModelParameters.DefaultPackageSpeed;
 
         // Iterate until there is some remaining speed and a path to traverse.
         while (remainingDistance > 0 && RemainingPath.Count > 0)

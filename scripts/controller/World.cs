@@ -47,9 +47,16 @@ public partial class World : Node2D
 
     public void SelectTile(ViewTile tile)
     {
-        if(SelectedTile is not null) SelectedTile.OnTileDeselected();
+        if (SelectedTile is not null)
+        {
+            SelectedTile.OnTileDeselected();
+        }
         SelectedTile = tile;
-        tile.OnTileSelected();
+        tile?.OnTileSelected();
+
+        // Update the building UI.
+        var ui = GameController.GetController().Ui.InfoPanel;
+        ui.OnTileSelected();
     }
 
     public void ProducePackages()

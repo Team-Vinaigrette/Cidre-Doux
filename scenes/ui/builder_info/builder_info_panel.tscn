@@ -1,0 +1,119 @@
+[gd_scene load_steps=8 format=3 uid="uid://ipeim5783vix"]
+
+[ext_resource type="Script" path="res://scripts/view/ui/BuildingInfoPanel.cs" id="1_gd1sp"]
+[ext_resource type="Resource" uid="uid://bk5rt1twr67sh" path="res://ressources/building_texture_map.tres" id="2_3bnvf"]
+[ext_resource type="PackedScene" uid="uid://8d6gcr4ho1i3" path="res://scenes/ui/building_info/consumes_info.tscn" id="3_rgjak"]
+[ext_resource type="Script" path="res://scripts/view/ui/ProducesContainer.cs" id="4_ne4vl"]
+[ext_resource type="Resource" uid="uid://x5ptsduv5xwd" path="res://ressources/resource_texture_map.tres" id="5_amq2r"]
+[ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="6_6ls3w"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_fiebo"]
+color = Color(0.866667, 0.866667, 0.866667, 1)
+grow_begin = 12.0
+grow_end = 12.0
+
+[node name="Builder Info Panel" type="PanelContainer" node_paths=PackedStringArray("BuildingIcon", "BuildingLabel", "Container", "ProducesContainer")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -41.0
+offset_right = 87.0
+offset_bottom = 41.0
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_gd1sp")
+BuildingTextureMap = ExtResource("2_3bnvf")
+ConsumesInfoScene = ExtResource("3_rgjak")
+BuildingIcon = NodePath("MarginContainer/Container/Building/Building Type")
+BuildingLabel = NodePath("MarginContainer/Container/Building/Building name")
+Container = NodePath("MarginContainer/Container")
+ProducesContainer = NodePath("MarginContainer/Container/Produces Container")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="Container" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Building" type="Control" parent="MarginContainer/Container"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+
+[node name="Building Type" type="TextureRect" parent="MarginContainer/Container/Building"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 35.0
+offset_bottom = 35.0
+expand_mode = 3
+
+[node name="Building name" type="Label" parent="MarginContainer/Container/Building"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Sawmill"
+vertical_alignment = 1
+justification_flags = 0
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/Container/Building"]
+layout_mode = 2
+offset_top = 44.0
+offset_right = 200.0
+offset_bottom = 48.0
+theme_override_styles/separator = SubResource("StyleBoxLine_fiebo")
+
+[node name="Produces Container" type="VBoxContainer" parent="MarginContainer/Container" node_paths=PackedStringArray("TurnCounter", "TextureRect")]
+layout_mode = 2
+script = ExtResource("4_ne4vl")
+TextureMap = ExtResource("5_amq2r")
+TurnCounter = NodePath("Produces Info/Turn Count")
+TextureRect = NodePath("Produces Info/Resource Type")
+
+[node name="Produces" type="Label" parent="MarginContainer/Container/Produces Container"]
+layout_mode = 2
+text = "Produces"
+vertical_alignment = 1
+justification_flags = 0
+
+[node name="Produces Info" type="HBoxContainer" parent="MarginContainer/Container/Produces Container"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Resource Type" type="TextureRect" parent="MarginContainer/Container/Produces Container/Produces Info"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+expand_mode = 3
+
+[node name="Turn Count" type="Label" parent="MarginContainer/Container/Produces Container/Produces Info"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Turn Icon" type="TextureRect" parent="MarginContainer/Container/Produces Container/Produces Info"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("6_6ls3w")
+expand_mode = 5
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/Container/Produces Container"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_fiebo")
+
+[node name="Consumes" type="Label" parent="MarginContainer/Container"]
+layout_mode = 2
+text = "Consumes
+"
+vertical_alignment = 1
+justification_flags = 0

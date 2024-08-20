@@ -16,7 +16,7 @@ public partial class TurnCounter : Panel
     /// Method used to update the text of the <see cref="Counter"/>.
     /// </summary>
     /// <param name="value">The value of the <see cref="Counter"/>.</param>
-    public void SetCounter(int value)
+    public void SetCounter(uint value)
     {
         Counter.Text = value.ToString();
     }

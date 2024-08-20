@@ -5,8 +5,8 @@ using System.Linq;
 using CidreDoux.scripts.model.building.crossing_cost;
 using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.tile;
+using CidreDoux.scripts.resources.parameters.building;
 using Godot;
-using CrossingCostMultiplier = CidreDoux.scripts.model.building.crossing_cost.CrossingCostMultiplier;
 
 namespace CidreDoux.scripts.model.building;
 
@@ -19,6 +19,11 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// The type of this building.
     /// </summary>
     public readonly BuildingType Type;
+
+    /// <summary>
+    /// The parameters of this building.
+    /// </summary>
+    public readonly BuildingParameters Parameters;
 
     /// <summary>
     /// A flag set when the building is destroyed,
@@ -42,111 +47,29 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// </summary>
     [MaybeNull] private readonly ICrossingCostComputer _crossingCostComputer;
 
-    /// <summary>
-    /// Creates a new <see cref="Building"/> object.
-    /// </summary>
-    /// <param name="type">The type of building to create.</param>
-    /// <returns>The generated <see cref="Building"/> resource.</returns>
-    [return: MaybeNull] public static Building CreateBuilding(BuildingType type)
+    public Building(BuildingType buildingType)
     {
-        switch (type)
+        // Load the parameters.
+        var parametersCollection = ResourceLoader.Load<BuildingParametersCollection>(
+            "res://ressources/building_parameters.tres"
+        );
+
+        // Find the parameters for the given type.
+        Type = buildingType;
+        Parameters = parametersCollection.GetParametersForBuildingType(buildingType);
+
+        // Initialize the package producer and the list of consumers.
+        PackageProducer = PackageProducer.CreateProducer(Parameters);
+        Consumers = new List<ResourceConsumer>(ResourceConsumer.CreateConsumers(Parameters.ConsumerParameters));
+
+        // Initialize the crossing cost.
+        _crossingCostComputer = Parameters.CrossingCostParameters switch
         {
-        case BuildingType.Base:
-            return new Building(
-                type,
-                PackageProducer.CreateBuildProducer(1),
-                new[]
-                {
-                    new ResourceConsumer(ResourceType.Stone, 1, 25),
-                    new ResourceConsumer(ResourceType.Gold, 1, 50)
-                },
-                new CrossingBlocker()
-            );
-        case BuildingType.Farm:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Food, 6),
-                new[] { new ResourceConsumer(ResourceType.Wood, 1, 5) }
-            );
-        case BuildingType.Mine:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Stone, 10),
-                new[] { new ResourceConsumer(ResourceType.Wood, 1, 5) }
-            );
-        case BuildingType.Sawmill:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Wood, 10),
-                new[] { new ResourceConsumer(ResourceType.Stone, 1, 5) },
-                new CrossingCostMultiplier(2f)
-            );
-        case BuildingType.Road:
-            return new Building(
-                type,
-                null,
-                Array.Empty<ResourceConsumer>(),
-                new CrossingCostMultiplier(0.5f)
-            );
-        case BuildingType.Field:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Wheat, 5),
-                new[] { new ResourceConsumer(ResourceType.Wood, 1, 5) }
-            );
-        case BuildingType.Harbor:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Food, 3),
-                new[] { new ResourceConsumer(ResourceType.Stone, 1, 3) },
-                new CrossingCostMultiplier(2.0f)
-            );
-        case BuildingType.Market:
-            return new Building(
-                type,
-                PackageProducer.CreateResourceProducer(ResourceType.Gold, 8),
-                new[] { new ResourceConsumer(ResourceType.Food, 2, 8) },
-                new CrossingCostMultiplier(2.0f)
-            );
-        default:
-            GD.PrintErr($"Generator for {type} building type not yet implemented");
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Class constructor.
-    /// </summary>
-    /// <param name="type">The type of building being described.</param>
-    /// <param name="packageProducer">The producer of this building.</param>
-    /// <param name="consumers">The lits of consumers used by this building.</param>
-    /// <param name="crossingCostComputer">The crossing cost computer for this building.</param>
-    private Building(
-        BuildingType type,
-        PackageProducer packageProducer,
-        IEnumerable<ResourceConsumer> consumers,
-        ICrossingCostComputer crossingCostComputer
-    )
-    {
-        Type = type;
-        PackageProducer = packageProducer;
-        Consumers = new List<ResourceConsumer>(consumers);
-        // IsDestroyed = false;
-        _crossingCostComputer = crossingCostComputer;
-    }
-
-    /// <summary>
-    /// Class constructor.
-    /// </summary>
-    /// <param name="type">The type of building being described.</param>
-    /// <param name="packageProducer">The producer of this building.</param>
-    /// <param name="consumers">The lits of consumers used by this building.</param>
-    private Building(
-        BuildingType type,
-        PackageProducer packageProducer,
-        IEnumerable<ResourceConsumer> consumers
-    ) : this(type, packageProducer, consumers, null)
-    {
+            BlockingCrossingCostParameters => new CrossingBlocker(),
+            MultiplierCrossingCostParameters parameters => new CrossingCostMultiplier(parameters),
+            OverrideCrossingCostParameters parameters => new CrossingCostReplacer(parameters),
+            _ => null
+        };
     }
 
     /// <inheritdoc cref="ICrossingCostComputer.ComputeCrossingCost"/>

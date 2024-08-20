@@ -1,3 +1,4 @@
+using CidreDoux.scripts.resources.parameters.building;
 using Godot;
 
 namespace CidreDoux.scripts.model.building.crossing_cost;
@@ -7,18 +8,16 @@ namespace CidreDoux.scripts.model.building.crossing_cost;
 /// </summary>
 public class CrossingCostMultiplier : ICrossingCostComputer
 {
+    public readonly MultiplierCrossingCostParameters Parameters;
+
     /// <summary>
     /// The factor applied to the cost.
     /// </summary>
-    public readonly float Factor;
+    public float Factor => Parameters.Multiplier;
 
-    /// <summary>
-    /// Class constructor.
-    /// </summary>
-    /// <param name="factor">The factor applied by this instance.</param>
-    public CrossingCostMultiplier(float factor)
+    public CrossingCostMultiplier(MultiplierCrossingCostParameters parameters)
     {
-        Factor = factor;
+        Parameters = parameters;
     }
 
     /// <inheritdoc cref="ICrossingCostComputer.ComputeCrossingCost"/>
