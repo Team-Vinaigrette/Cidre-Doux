@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -42,6 +43,9 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// </summary>
     [MaybeNull] private readonly ICrossingCostComputer _crossingCostComputer;
 
+    
+    public List<BackgroundType> ValidBackgroundTypes;
+    
     /// <summary>
     /// Creates a new <see cref="Building"/> object.
     /// </summary>
@@ -125,16 +129,36 @@ public class Building : ICrossingCostComputer, ITurnExecutor
         BuildingType type,
         PackageProducer packageProducer,
         IEnumerable<ResourceConsumer> consumers,
-        ICrossingCostComputer crossingCostComputer
-    )
+        IEnumerable<BackgroundType> validBackgrounds,
+        ICrossingCostComputer crossingCostComputer)
     {
         Type = type;
         PackageProducer = packageProducer;
         Consumers = new List<ResourceConsumer>(consumers);
-        // IsDestroyed = false;
         _crossingCostComputer = crossingCostComputer;
+        ValidBackgroundTypes = new List<BackgroundType>(validBackgrounds);
     }
 
+    private Building(
+        BuildingType type,
+        PackageProducer packageProducer,
+        IEnumerable<ResourceConsumer> consumers,
+        ICrossingCostComputer crossingCostComputer) 
+        : this(
+            type, 
+            packageProducer, 
+            consumers, 
+            new List<BackgroundType>()
+                {
+                    BackgroundType.Forest,
+                    BackgroundType.Grass,
+                    BackgroundType.Mountain
+                }, 
+            crossingCostComputer)
+    {
+    }
+    
+    
     /// <summary>
     /// Class constructor.
     /// </summary>

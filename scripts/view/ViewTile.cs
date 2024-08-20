@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CidreDoux.scripts.controller;
@@ -143,8 +144,8 @@ public partial class ViewTile : Node2D
     public void BuildTileChangeHandler()
     {
         var controller = GameController.GetController();
-        if (Model.HasBuilding())
-        {
+        Debug.Assert(controller.SelectedBuildingType != null, "controller.SelectedBuildingType != null");
+        if (!Model.CanPlaceBuilding((BuildingType)controller.SelectedBuildingType)){
             ChangeTileColor(Colors.Red);
             controller.PathPreviewer.UpdatePath(null);
         }

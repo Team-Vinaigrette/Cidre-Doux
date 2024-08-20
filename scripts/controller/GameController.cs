@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CidreDoux.scripts.model;
@@ -65,6 +66,12 @@ public partial class GameController : Node
     /// </summary>
     public Tile ActiveTile = null;
 
+    public BuildingType? SelectedBuildingType { get; private set; } = null;
+
+    public void SetSelectedBuildingType(BuildingType building)
+    {
+        SelectedBuildingType = building;
+    }
     public void ChangeState(GameState newState)
     {
         PathPreviewer.SetVisible(newState == GameState.Build || newState == GameState.AssignPath);
@@ -127,11 +134,20 @@ public partial class GameController : Node
     /// Configures the base to send a build package at the end of the turn
     /// </summary>
     /// <param name="type"></param>
-    public void RequestBuild(BuildingType type)
+    public void RequestBuild()
     {
-        var @base = World.GetBaseTile();
-        @base.Building.PackageProducer.AssignBuildAction(new BuildAction(type));
-        @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        Debug.Assert(SelectedBuildingType != null, nameof(SelectedBuildingType) + " != null");
+        var targetTile = World.SelectedTile.Model;
+        var buildingType = (BuildingType)SelectedBuildingType;
+        
+        if (targetTile.CanPlaceBuilding(buildingType)){
+            var @base = World.GetBaseTile();
+            @base.Building.PackageProducer.AssignBuildAction(new BuildAction(buildingType));
+            @base.AssignPath(@base.AStar(World.SelectedTile.Model));
+        }
+        
+        SelectedBuildingType = null;
+        ChangeState(GameState.Idle);
     }
 
     public void AddMessenger(Package package)
