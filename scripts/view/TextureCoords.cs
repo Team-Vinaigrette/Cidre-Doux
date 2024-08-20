@@ -34,6 +34,6 @@ public static class TextureCoords
         [ResourceType.Stone] = new Rect2(330, 90, 140, 150),
         [ResourceType.Gold] = new Rect2(325, 285, 140, 150),
         [ResourceType.Wheat] = new Rect2(70, 285, 140, 150),
-        [ResourceType.Food] = new Rect2(330, 495, 140, 150)
+        [ResourceType.Food] = new Rect2(70, 495, 140, 150)
     };
 }

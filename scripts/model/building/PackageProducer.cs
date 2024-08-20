@@ -123,7 +123,8 @@ public class PackageProducer : ITurnExecutor, IPackageProducer
     /// <param name="path">The new path of the <see cref="PackageProducer"/>.</param>
     public void AssignPath(IEnumerable<Tile> path)
     {
-        Path = new List<Tile>(path);
+        if (path is null) Path = null;
+        else Path = new List<Tile>(path);
     }
 
     /// <inheritdoc cref="ITurnExecutor.EndTurn"/>

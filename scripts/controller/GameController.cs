@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CidreDoux.scripts.model;
 using CidreDoux.scripts.model.building;
 using CidreDoux.scripts.model.package;
 using CidreDoux.scripts.model.package.action;
@@ -141,9 +142,10 @@ public partial class GameController : Node
 
         if (Input.IsActionJustPressed("click") && World.SelectedTile.Model.HasBuilding())
         {
-            if (World.SelectedTile.Model.Building.PackageProducer is not null)
+            var building = World.SelectedTile.Model.Building;
+            if (building.PackageProducer is not null && !building.IsDestroyed)
             {
-                if (World.SelectedTile.Model.Building.PackageProducer.PackageType == PackageType.Ressource)
+                if (building.PackageProducer.PackageType == PackageType.Ressource)
                 {
                     ActiveTile = World.SelectedTile.Model;
                     PathPreviewer.UpdatePath(new List<Tile>{ActiveTile});
@@ -157,7 +159,8 @@ public partial class GameController : Node
     {
         if (Input.IsActionJustReleased("click"))
         {
-            ActiveTile.AssignPath(new List<Tile>(PathPreviewer.TilePath));
+            if(PathPreviewer.TilePath.Count > 1) ActiveTile.AssignPath(PathPreviewer.TilePath);
+            else ActiveTile.AssignPath(null);
             ChangeState(GameState.Idle);
         }
     }

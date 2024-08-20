@@ -14,7 +14,8 @@ script = ExtResource("1_3u64w")
 Background = NodePath("Hex")
 BuildingSprite = NodePath("Sprite2D")
 PathScene = ExtResource("2_qte14")
-PathPreviewColor = Color(0.368627, 0, 0.054902, 0.631373)
+PathPreviewColor = Color(0.360784, 0, 0, 0.780392)
+BuildingDestroyedColor = Color(0.243137, 0, 0, 0.898039)
 
 [node name="Hex" type="Polygon2D" parent="."]
 position = Vector2(0, -1)

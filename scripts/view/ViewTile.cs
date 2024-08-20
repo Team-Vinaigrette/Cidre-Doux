@@ -34,6 +34,7 @@ public partial class ViewTile : Node2D
 
     [Export] public PackedScene PathScene;
     [Export] public Color PathPreviewColor;
+    [Export] public Color BuildingDestroyedColor;
     
     [MaybeNull] public Path ProducerPath;
     
@@ -95,7 +96,6 @@ public partial class ViewTile : Node2D
 
 
         // Watch for updates to the selected tile.
-        World.OnSelectedTileChange += _OnSelectedTileChange;
         Model.OnModelUpdate += _OnModelUpdate;
     }
 
@@ -106,38 +106,15 @@ public partial class ViewTile : Node2D
             BuildingSprite.Position = Model.Building.Type == BuildingType.Base ? BaseOffset : Vector2.Zero;
             BuildingSprite.SetRegionRect(TextureCoords.Buildings[Model.Building.Type]);
             BuildingSprite.Visible = true;
+            if (Model.Building.IsDestroyed)
+            {
+                BuildingSprite.Modulate = BuildingDestroyedColor;
+            }
             UpdatePathPreview();
         }
         else BuildingSprite.Visible = false;
     }
-    
-    /// <summary>
-    /// Callback triggered by the <see cref="World"/> class when the selected tile changes.
-    /// </summary>
-    /// <param name="column">The column number of the selected tile.</param>
-    /// <param name="row">The row number of the selected tile.</param>
-    public void _OnSelectedTileChange(int column, int row)
-    {
-        GD.Print($"TileChange({column},{row})");
-        // Check if the tile was selected.
-        if (!(Model.Location.Column == column && Model.Location.Row == row))
-        {
-            ChangeTileColor(Colors.White);
-            return;
-        }
-        
-        ChangeTileColor(Colors.RebeccaPurple);
-        switch (GameController.GetController().CurrentState)
-        {
-            case GameState.Idle: break;
-            case GameState.Build: BuildTileChangeHandler();
-                break;
-            case GameState.AssignPath: AssignPathChangeHandler();
-                break;
-            case GameState.TurnEnd: break;
-        }
-    }
-
+   
     public void OnTileSelected()
     {
         // GD.Print($"Entered tile({Model.Location})");
@@ -179,18 +156,23 @@ public partial class ViewTile : Node2D
 
     public void AssignPathChangeHandler()
     {
-        if (Model.ComputeCrossingCost() < 0) return;
+        if (Model.ComputeCrossingCost() < 0 && !Model.HasBuilding()) return;
 
         var previewer = GameController.GetController().PathPreviewer;
         var index = previewer.TilePath.IndexOf(Model);
         switch (index)
         {
-            case 0:
-                return;
             case < 0:
             {
                 GD.Print($"tile {Model.Location} not in path.");
-                if (previewer.TilePath.Last().IsNeighbor(Model)) previewer.TilePath.Add(Model);
+                var last = previewer.TilePath.Last();
+                var lastCrossable = last;
+                if (last.ComputeCrossingCost() < 0) lastCrossable = previewer.TilePath[^2];
+                if (lastCrossable.IsNeighbor(Model))
+                {
+                    if (last != lastCrossable) previewer.TilePath.Remove(last);
+                    previewer.TilePath.Add(Model);
+                }
                 else GD.Print($"tile {Model.Location} is not a neighbor of {previewer.TilePath.Last().Location}");
                 break;
             }
@@ -207,6 +189,16 @@ public partial class ViewTile : Node2D
     {
         if (Model.Building is null) return;
         if (Model.Building.PackageProducer is null) return;
+        if (Model.Building.IsDestroyed && ProducerPath is null) return;
+        
+        if(Model.Building.IsDestroyed)
+        {
+            GD.Print("Destroying building path");
+            GameController.GetController().PathLayer.RemoveChild(ProducerPath);
+            ProducerPath.QueueFree();
+            ProducerPath = null;
+            return;
+        }
 
         if (ProducerPath is null)
         {

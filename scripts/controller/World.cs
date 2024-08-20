@@ -29,12 +29,6 @@ public partial class World : Node2D
     /// </summary>
     [MaybeNull]
     public ViewTile SelectedTile { get; private set; }
-    
-    /// <summary>
-    /// Signal emitted when the selected tile is changed.
-    /// </summary>
-    [Signal]
-    public delegate void OnSelectedTileChangeEventHandler(int column, int row);
 
     private HexMap _map;
 
@@ -139,8 +133,5 @@ public partial class World : Node2D
         // Get the selected tile.
         var newSelectedTile = GetViewTile(selectedLocation);
         if (newSelectedTile != SelectedTile) SelectTile(newSelectedTile);
-        
-        // Send a "hover changed" event.
-        // EmitSignal(SignalName.OnSelectedTileChange, SelectedTile.Location.Column, SelectedTile.Location.Row);
     }
 }

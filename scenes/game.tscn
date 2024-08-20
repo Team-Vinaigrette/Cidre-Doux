@@ -19,14 +19,14 @@ PathPreviewer = NodePath("PathLayer/PathPreview")
 
 [node name="World" parent="." instance=ExtResource("1_eqon8")]
 
-[node name="MessengerLayer" parent="." instance=ExtResource("1_eqon8")]
-script = null
-
 [node name="PathLayer" parent="." instance=ExtResource("1_eqon8")]
 script = null
 
 [node name="PathPreview" parent="PathLayer" instance=ExtResource("4_15vc6")]
 visible = false
+
+[node name="MessengerLayer" parent="." instance=ExtResource("1_eqon8")]
+script = null
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
 

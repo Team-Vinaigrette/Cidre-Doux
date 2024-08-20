@@ -5,7 +5,7 @@ namespace CidreDoux.scripts.model.tile;
 /// <summary>
 /// Simple struct used to describe the location of a <see cref="Tile"/>.
 /// </summary>
-public struct TileLocation
+public record struct TileLocation
 {
     /// <summary>
     /// The column of the tile.

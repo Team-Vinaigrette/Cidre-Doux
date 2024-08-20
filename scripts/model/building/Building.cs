@@ -158,6 +158,7 @@ public class Building : ICrossingCostComputer, ITurnExecutor
     /// <inheritdoc cref="PackageProducer.ProducePackage"/>
     public Package ProducePackage()
     {
+        if (IsDestroyed) return null;
         return PackageProducer?.ProducePackage();
     }
 
