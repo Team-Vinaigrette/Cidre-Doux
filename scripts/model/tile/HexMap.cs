@@ -18,6 +18,17 @@ public class HexMap
     /// </summary>
     public readonly SortedDictionary<TileLocation, Tile> Map;
 
+    private static readonly BackgroundType[] TypeValues = new[]
+    {
+        BackgroundType.Grass,
+        BackgroundType.Grass,
+        BackgroundType.Grass,
+        BackgroundType.Forest,
+        BackgroundType.Forest,
+        BackgroundType.Mountain,
+        BackgroundType.Water,
+    };
+
     /// <summary>
     /// Size of the map.
     /// </summary>
@@ -228,6 +239,6 @@ public class HexMap
     /// <returns>A random value from the <see cref="BackgroundType"/> enum.</returns>
     private BackgroundType _GenerateRandomBackgroundType()
     {
-        return (BackgroundType)Tile.BackgroundTypeValues.GetValue(_randomizer.Next(Tile.BackgroundTypeValues.Length))!;
+        return TypeValues[_randomizer.Next(TypeValues.Length)];
     }
 }

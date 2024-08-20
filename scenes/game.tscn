@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dgwoxlr0cvu0u"]
+[gd_scene load_steps=10 format=3 uid="uid://dgwoxlr0cvu0u"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="Script" path="res://scripts/controller/GameController.cs" id="1_hm80b"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dy68q3ggsdsai" path="res://scenes/player.tscn" id="3_6t48a"]
 [ext_resource type="PackedScene" uid="uid://b67hdfc1n3vvx" path="res://scenes/path.tscn" id="6_tkxjh"]
 [ext_resource type="Script" path="res://scripts/view/EndTurnButton.cs" id="7_aj2n4"]
+[ext_resource type="Script" path="res://scripts/ReplayButton.cs" id="8_evy1t"]
 [ext_resource type="Script" path="res://scripts/ExitButton.cs" id="8_r78md"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("EndTurnButton", "World", "Player", "PathLayer", "MessengerLayer", "PathPreviewer", "Ui")]
@@ -57,6 +58,18 @@ grow_horizontal = 0
 theme_override_font_sizes/font_size = 36
 text = "Exit game"
 script = ExtResource("8_r78md")
+
+[node name="ReplayButton" type="Button" parent="UI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -394.0
+offset_right = -200.0
+offset_bottom = 58.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 36
+text = "Try again!"
+script = ExtResource("8_evy1t")
 
 [node name="Player" parent="." instance=ExtResource("3_6t48a")]
 EdgeScrollingThreshold = 20

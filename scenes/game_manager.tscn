@@ -1,10 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://du3dwemeed4pr"]
+[gd_scene load_steps=10 format=3 uid="uid://du3dwemeed4pr"]
 
 [ext_resource type="Script" path="res://scripts/GameManager.cs" id="1_6oij2"]
 [ext_resource type="PackedScene" uid="uid://dgwoxlr0cvu0u" path="res://scenes/game.tscn" id="2_6sc47"]
 [ext_resource type="Script" path="res://scripts/ReplayButton.cs" id="2_336eg"]
 [ext_resource type="Script" path="res://scripts/ExitButton.cs" id="3_t1o17"]
 [ext_resource type="PackedScene" uid="uid://oyrgnkhd4dod" path="res://scenes/GameOver.tscn" id="3_vskli"]
+[ext_resource type="Texture2D" uid="uid://bn0x3axnotkn3" path="res://ressources/arrières-plans.png" id="6_gk3mr"]
+[ext_resource type="Texture2D" uid="uid://vhwsapm0c5i3" path="res://ressources/bâtiments.png" id="7_rlod6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pn0wa"]
+atlas = ExtResource("6_gk3mr")
+region = Rect2(0, 0, 400, 400)
 
 [sub_resource type="LabelSettings" id="LabelSettings_lcy8y"]
 font_size = 48
@@ -18,6 +24,31 @@ GameOverScene = ExtResource("3_vskli")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="Tile" type="Node2D" parent="CanvasLayer"]
+position = Vector2(960, 540)
+
+[node name="Background" type="Polygon2D" parent="CanvasLayer/Tile"]
+position = Vector2(0, -1)
+rotation = -0.000178278
+texture = SubResource("AtlasTexture_pn0wa")
+texture_offset = Vector2(1, 0)
+texture_scale = Vector2(200, 200)
+polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
+uv = PackedVector2Array(0.5, 1, 1, 0.87, 1, 0.37, 0.5, 0, 0, 0.37, 0, 0.87)
+
+[node name="Border" type="Line2D" parent="CanvasLayer/Tile"]
+points = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
+closed = true
+width = 5.0
+default_color = Color(0.302781, 0, 0.0713638, 1)
+
+[node name="Building Sprite" type="Sprite2D" parent="CanvasLayer/Tile"]
+position = Vector2(0, -10)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("7_rlod6")
+region_enabled = true
+region_rect = Rect2(10, 10, 340, 380)
+
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 8
@@ -28,7 +59,7 @@ anchor_bottom = 0.5
 offset_left = -300.0
 offset_top = -200.0
 offset_right = 300.0
-offset_bottom = 100.0
+offset_bottom = 151.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -54,7 +85,7 @@ offset_top = -31.0
 offset_right = 91.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 36
-text = "Start new game"
+text = "Start game"
 script = ExtResource("2_336eg")
 
 [node name="ExitButton" type="Button" parent="CanvasLayer/Control"]
