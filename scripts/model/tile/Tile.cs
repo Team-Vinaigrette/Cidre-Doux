@@ -230,6 +230,18 @@ public partial class Tile: GodotObject, ITurnExecutor
             return null;
         }
 
+        int goalcost = goal.ComputeCrossingCost();
+        if (goalcost < 0)
+        {
+            if (!goal.HasBuilding())
+            {
+                GD.PrintErr("Attempted to call AStar on uncrossable tile");
+                return null;
+            }
+
+            goalcost = ModelParameters.DefaultPackageSpeed;
+        }
+
         var openSet = new List<Tile> { this };
 
         var cameFrom = new Dictionary<Tile, Tile>();
@@ -247,8 +259,8 @@ public partial class Tile: GodotObject, ITurnExecutor
             openSet.Remove(current);
             foreach (var neighbor in current.GetNeighbors())
             {
-                // Cost of entering last tile is always 1 turn
-                var crossingCost = neighbor == goal ? ModelParameters.DefaultPackageSpeed : neighbor.ComputeCrossingCost();
+                // Cost of entering last tile is 1 turn if the tile has a building and blocks traffic
+                var crossingCost = neighbor == goal ? goalcost : neighbor.ComputeCrossingCost();
                 if(crossingCost < 0) continue;
                 
                 int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;
