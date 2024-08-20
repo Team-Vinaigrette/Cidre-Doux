@@ -13,6 +13,7 @@ public static class ModelParameters
     /// The default speed for <see cref="package.Package"/>.
     /// </summary>
     public static readonly StringName DefaultPackageSpeedSetting = new("game/navigation/crossing_costs/integer_precision");
+    public static int DefaultPackageSpeed => ProjectSettings.GetSettingWithOverride(DefaultPackageSpeedSetting).AsInt32();
 
     /// <summary>
     /// Dictionary of all the crossing costs by <see cref="BackgroundType"/> variant.
@@ -24,4 +25,9 @@ public static class ModelParameters
         [BackgroundType.Forest] = new StringName("game/navigation/crossing_costs/background_type/forest"),
         [BackgroundType.Mountain] = new StringName("game/navigation/crossing_costs/background_type/mountain")
     };
+
+    public static int GetBackgroundTypeCrossingCost(BackgroundType backgroundType)
+    {
+        return ProjectSettings.GetSettingWithOverride(BackgroundTypeCrossingCostSettings[backgroundType]).AsInt32();
+    }
 }

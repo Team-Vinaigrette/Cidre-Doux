@@ -11,12 +11,13 @@ namespace CidreDoux.scripts.model.tile;
 /// <summary>
 /// Model class used to represent a single Tile in the world map.
 /// </summary>
-public partial class Tile: GodotObject, ITurnExecutor
+public partial class Tile : GodotObject, ITurnExecutor
 {
     /// <summary>
     /// Delegate handler for OnModelUpdate signal
     /// </summary>
-    [Signal] public delegate void OnModelUpdateEventHandler();
+    [Signal]
+    public delegate void OnModelUpdateEventHandler();
 
     /// <summary>
     /// The background type of this tile.
@@ -77,7 +78,8 @@ public partial class Tile: GodotObject, ITurnExecutor
     /// <param name="location">The location of the tile in the <see cref="HexMap"/>.</param>
     /// <param name="backgroundType">The <see cref="BackgroundType"/> of this tile.</param>
     /// <param name="parent">A reference to the <see cref="HexMap"/> containing this tile.</param>
-    public Tile(TileLocation location, BackgroundType backgroundType, HexMap parent){
+    public Tile(TileLocation location, BackgroundType backgroundType, HexMap parent)
+    {
         Background = backgroundType;
         Building = null;
         Location = location;
@@ -87,12 +89,13 @@ public partial class Tile: GodotObject, ITurnExecutor
     /// <summary>
     /// Empty constructor required by Godot.
     /// </summary>
-    public Tile(): this(new TileLocation(0, 0), BackgroundType.Grass, null)
+    public Tile() : this(new TileLocation(0, 0), BackgroundType.Grass, null)
     {
     }
 
     /// <inheritdoc cref="object.ToString"/>
-    public override string ToString() {
+    public override string ToString()
+    {
         return $"Tile {Location}<{Background}, {Building}>";
     }
 
@@ -100,7 +103,8 @@ public partial class Tile: GodotObject, ITurnExecutor
     /// Helper used to render the tile as a string.
     /// Used only for debugging purposes.
     /// </summary>
-    public string ToStringMap() {
+    public string ToStringMap()
+    {
         return Location.ToString();
     }
 
@@ -129,8 +133,11 @@ public partial class Tile: GodotObject, ITurnExecutor
 
         // Compare the locations.
         var relPos = new TileLocation(Location.Column - tile.Location.Column, Location.Row - tile.Location.Row);
-        return Mathf.Abs(Location.Row % 2) == 0 ? EvenNeighborsRelativeLocations.Contains(relPos) : OddNeighborsRelativeLocations.Contains(relPos);
+        return Mathf.Abs(Location.Row % 2) == 0
+            ? EvenNeighborsRelativeLocations.Contains(relPos)
+            : OddNeighborsRelativeLocations.Contains(relPos);
     }
+
     public bool HasBuilding()
     {
         return Building is not null;
@@ -151,7 +158,7 @@ public partial class Tile: GodotObject, ITurnExecutor
 
         // Add the building.
         GD.Print($"Tile {Location} has a new {buildingType} {nameof(Building)}");
-        Building = Building.CreateBuilding(buildingType);
+        Building = new Building(buildingType);
         EmitSignal(Tile.SignalName.OnModelUpdate);
     }
 
@@ -187,7 +194,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     public int ComputeCrossingCost()
     {
         // Get the base cost from the background type.
-        var baseCost = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting).AsInt32() * ProjectSettings.GetSettingWithOverride(ModelParameters.BackgroundTypeCrossingCostSettings[Background]).AsInt32();
+        var baseCost = ModelParameters.DefaultPackageSpeed * ModelParameters.GetBackgroundTypeCrossingCost(Background);
 
         // Check if there is a building.
         return Building?.ComputeCrossingCost(baseCost) ?? baseCost;
@@ -213,7 +220,7 @@ public partial class Tile: GodotObject, ITurnExecutor
         var current = this;
         var res = new Stack<Tile>();
         res.Push(current);
-        while(cameFrom.ContainsKey(current))
+        while (cameFrom.ContainsKey(current))
         {
             current = cameFrom[current];
             res.Push(current);
@@ -225,7 +232,7 @@ public partial class Tile: GodotObject, ITurnExecutor
     public int ManhattanDist(Tile goal)
     {
         var integerPrecision = ProjectSettings.GetSettingWithOverride(ModelParameters.DefaultPackageSpeedSetting)
-            .AsInt32();
+                                              .AsInt32();
         var dx = goal.Location.Column - this.Location.Column;
         var dy = goal.Location.Row - this.Location.Column;
 
@@ -259,7 +266,7 @@ public partial class Tile: GodotObject, ITurnExecutor
 
         var gScores = new Dictionary<Tile, int> { { this, 0 } };
 
-        var fScores = new Dictionary<Tile, int>{{this, this.ManhattanDist(goal)}};
+        var fScores = new Dictionary<Tile, int> { { this, this.ManhattanDist(goal) } };
 
         while (openSet.Count > 0)
         {
@@ -272,7 +279,7 @@ public partial class Tile: GodotObject, ITurnExecutor
             {
                 // Cost of entering last tile is 1 turn if the tile has a building and blocks traffic
                 var crossingCost = neighbor == goal ? goalcost : neighbor.ComputeCrossingCost();
-                if(crossingCost < 0) continue;
+                if (crossingCost < 0) continue;
 
                 int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;
                 int neighborGScore = gScores.ContainsKey(neighbor) ? gScores[neighbor] : int.MaxValue;
@@ -282,7 +289,7 @@ public partial class Tile: GodotObject, ITurnExecutor
                     cameFrom[neighbor] = current;
                     gScores[neighbor] = tentativeGScore;
                     fScores[neighbor] = tentativeGScore + neighbor.ManhattanDist(goal);
-                    if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
+                    if (!openSet.Contains(neighbor)) openSet.Add(neighbor);
                 }
             }
         }

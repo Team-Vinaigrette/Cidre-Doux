@@ -1,0 +1,163 @@
+[gd_resource type="Resource" script_class="BuildingParametersCollection" load_steps=34 format=3 uid="uid://b3vjvk5a1m15h"]
+
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/BuildingParametersCollection.cs" id="1_ctbr8"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/ResourceConsumerParameters.cs" id="1_w44fr"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/BaseBuildingParameters.cs" id="2_a04lo"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/DeliveryBuildingParameters.cs" id="3_wwc7p"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/MultiplierCrossingCostParameters.cs" id="4_cw0ee"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/EmptyBuildingParameters.cs" id="4_vn7fb"]
+[ext_resource type="Script" path="res://scripts/resources/parameters/building/BlockingCrossingCostParameters.cs" id="5_yry6w"]
+
+[sub_resource type="Resource" id="Resource_qb4xk"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 1
+ConsumedAmount = 1
+ConsumptionDelay = 25
+
+[sub_resource type="Resource" id="Resource_plrc8"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 4
+ConsumedAmount = 1
+ConsumptionDelay = 50
+
+[sub_resource type="Resource" id="Resource_eblu7"]
+script = ExtResource("5_yry6w")
+
+[sub_resource type="Resource" id="Resource_lpmxt"]
+script = ExtResource("2_a04lo")
+ProductionDelay = 3
+ConsumerParameters = Array[Object]([SubResource("Resource_qb4xk"), SubResource("Resource_plrc8")])
+CrossingCostParameters = SubResource("Resource_eblu7")
+
+[sub_resource type="Resource" id="Resource_3wr50"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 2
+ConsumedAmount = 2
+ConsumptionDelay = 4
+
+[sub_resource type="Resource" id="Resource_4s1xn"]
+script = ExtResource("4_cw0ee")
+Multiplier = 1.0
+
+[sub_resource type="Resource" id="Resource_rvl23"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 3
+ProductionDelay = 6
+ConsumerParameters = Array[Object]([SubResource("Resource_3wr50")])
+CrossingCostParameters = SubResource("Resource_4s1xn")
+
+[sub_resource type="Resource" id="Resource_o45rv"]
+script = ExtResource("4_cw0ee")
+Multiplier = 1.0
+
+[sub_resource type="Resource" id="Resource_35ifo"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 2
+ProductionDelay = 4
+ConsumerParameters = null
+CrossingCostParameters = SubResource("Resource_o45rv")
+
+[sub_resource type="Resource" id="Resource_pwir0"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 4
+ConsumedAmount = 2
+ConsumptionDelay = 15
+
+[sub_resource type="Resource" id="Resource_hl5k1"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 0
+ConsumedAmount = 5
+ConsumptionDelay = 50
+
+[sub_resource type="Resource" id="Resource_buk6h"]
+script = ExtResource("5_yry6w")
+
+[sub_resource type="Resource" id="Resource_ohahg"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 3
+ProductionDelay = 3
+ConsumerParameters = Array[Object]([SubResource("Resource_pwir0"), SubResource("Resource_hl5k1")])
+CrossingCostParameters = SubResource("Resource_buk6h")
+
+[sub_resource type="Resource" id="Resource_rghfx"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 0
+ConsumedAmount = 1
+ConsumptionDelay = 5
+
+[sub_resource type="Resource" id="Resource_vvgjr"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 1
+ConsumedAmount = 1
+ConsumptionDelay = 5
+
+[sub_resource type="Resource" id="Resource_6m10w"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 2
+ConsumedAmount = 2
+ConsumptionDelay = 10
+
+[sub_resource type="Resource" id="Resource_ysh14"]
+script = ExtResource("4_cw0ee")
+Multiplier = 2.0
+
+[sub_resource type="Resource" id="Resource_p4yg5"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 4
+ProductionDelay = 8
+ConsumerParameters = Array[Object]([SubResource("Resource_rghfx"), SubResource("Resource_vvgjr"), SubResource("Resource_6m10w")])
+CrossingCostParameters = SubResource("Resource_ysh14")
+
+[sub_resource type="Resource" id="Resource_v8t08"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 0
+ConsumedAmount = 1
+ConsumptionDelay = 10
+
+[sub_resource type="Resource" id="Resource_ai52h"]
+script = ExtResource("4_cw0ee")
+Multiplier = 1.0
+
+[sub_resource type="Resource" id="Resource_hlvna"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 1
+ProductionDelay = 5
+ConsumerParameters = Array[Object]([SubResource("Resource_v8t08")])
+CrossingCostParameters = SubResource("Resource_ai52h")
+
+[sub_resource type="Resource" id="Resource_p1rcu"]
+script = ExtResource("4_cw0ee")
+Multiplier = 0.5
+
+[sub_resource type="Resource" id="Resource_cgo8x"]
+script = ExtResource("4_vn7fb")
+ConsumerParameters = Array[Object]([])
+CrossingCostParameters = SubResource("Resource_p1rcu")
+
+[sub_resource type="Resource" id="Resource_cscd0"]
+script = ExtResource("1_w44fr")
+ConsumedResource = 3
+ConsumedAmount = 1
+ConsumptionDelay = 5
+
+[sub_resource type="Resource" id="Resource_33phb"]
+script = ExtResource("4_cw0ee")
+Multiplier = 1.0
+
+[sub_resource type="Resource" id="Resource_582p1"]
+script = ExtResource("3_wwc7p")
+ProducedResource = 0
+ProductionDelay = 10
+ConsumerParameters = Array[Object]([SubResource("Resource_cscd0")])
+CrossingCostParameters = SubResource("Resource_33phb")
+
+[resource]
+script = ExtResource("1_ctbr8")
+Field = SubResource("Resource_35ifo")
+Farm = SubResource("Resource_rvl23")
+Mine = SubResource("Resource_hlvna")
+Sawmill = SubResource("Resource_582p1")
+Harbor = SubResource("Resource_ohahg")
+Market = SubResource("Resource_p4yg5")
+Road = SubResource("Resource_cgo8x")
+Base = SubResource("Resource_lpmxt")

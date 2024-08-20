@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dgwoxlr0cvu0u"]
+[gd_scene load_steps=7 format=3 uid="uid://dgwoxlr0cvu0u"]
 
 [ext_resource type="PackedScene" uid="uid://bjpff7h43dc7u" path="res://scenes/world.tscn" id="1_eqon8"]
 [ext_resource type="Script" path="res://scripts/controller/GameController.cs" id="1_hm80b"]
 [ext_resource type="PackedScene" uid="uid://ccot64jqk235" path="res://scenes/messenger.tscn" id="2_fqbkp"]
 [ext_resource type="PackedScene" uid="uid://de72ehimbx7oa" path="res://scenes/UI.tscn" id="2_lxprr"]
 [ext_resource type="PackedScene" uid="uid://dy68q3ggsdsai" path="res://scenes/player.tscn" id="3_6t48a"]
-[ext_resource type="PackedScene" uid="uid://cfkwsftgfxnur" path="res://scenes/buildPanel.tscn" id="4_dx815"]
 [ext_resource type="PackedScene" uid="uid://b67hdfc1n3vvx" path="res://scenes/path.tscn" id="6_tkxjh"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("World", "Player", "PathLayer", "MessengerLayer", "PathPreviewer", "Ui")]
@@ -16,7 +15,7 @@ Player = NodePath("Player")
 PathLayer = NodePath("PathLayer")
 MessengerLayer = NodePath("MessengerLayer")
 PathPreviewer = NodePath("PathLayer/PathPreview")
-Ui = NodePath("UI/Build Panel")
+Ui = NodePath("UI")
 
 [node name="World" parent="." instance=ExtResource("1_eqon8")]
 
@@ -30,7 +29,5 @@ visible = false
 script = null
 
 [node name="UI" parent="." instance=ExtResource("2_lxprr")]
-
-[node name="Build Panel" parent="UI" instance=ExtResource("4_dx815")]
 
 [node name="Player" parent="." instance=ExtResource("3_6t48a")]

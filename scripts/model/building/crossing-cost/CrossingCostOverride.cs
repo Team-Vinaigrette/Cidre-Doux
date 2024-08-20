@@ -1,3 +1,4 @@
+using CidreDoux.scripts.resources.parameters.building;
 using Godot;
 
 namespace CidreDoux.scripts.model.building.crossing_cost;
@@ -7,18 +8,16 @@ namespace CidreDoux.scripts.model.building.crossing_cost;
 /// </summary>
 public class CrossingCostReplacer : ICrossingCostComputer
 {
+    public readonly OverrideCrossingCostParameters Parameters;
+
     /// <summary>
     /// The value applied as the cost.
     /// </summary>
-    public readonly int Value;
+    public int Value => Parameters.Value;
 
-    /// <summary>
-    /// Class constructor.
-    /// </summary>
-    /// <param name="value">The value applied by this instance.</param>
-    public CrossingCostReplacer(int value)
+    public CrossingCostReplacer(OverrideCrossingCostParameters parameters)
     {
-        Value = value;
+        Parameters = parameters;
     }
 
     /// <inheritdoc cref="ICrossingCostComputer.ComputeCrossingCost"/>

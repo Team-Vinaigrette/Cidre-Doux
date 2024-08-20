@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using CidreDoux.scripts.model.package;
+using CidreDoux.scripts.resources.parameters.building;
 
 namespace CidreDoux.scripts.model.building;
 
@@ -20,30 +23,32 @@ public interface IResourceConsumer
 /// </summary>
 public class ResourceConsumer: ITurnExecutor, IResourceConsumer
 {
+    public readonly ResourceConsumerParameters Parameters;
+
     /// <summary>
     /// The type of resource being consumed by this instance.
     /// </summary>
-    public readonly ResourceType RequiredResourceType;
+    public ResourceType RequiredResourceType => Parameters.ConsumedResource;
 
     /// <summary>
     /// The amount of <see cref="ResourceType"/> required for this instance.
     /// </summary>
-    public readonly int RequiredAmount;
+    public uint RequiredAmount => Parameters.ConsumedAmount;
 
     /// <summary>
     /// The time after which the resources will be consumed.
     /// </summary>
-    public readonly int ConsumptionDelay;
+    public uint ConsumptionDelay => Parameters.ConsumptionDelay;
 
     /// <summary>
     /// Counter used to keep track of the <see cref="ConsumptionDelay"/> turn by turn.
     /// </summary>
-    public int TurnsLeft { get; private set; }
+    public uint TurnsLeft { get; private set; }
 
     /// <summary>
     /// Counter used to count how many resources of the given <see cref="ResourceType"/> have been consumed.
     /// </summary>
-    public int AmountConsumed { get; private set; }
+    public uint AmountConsumed { get; private set; }
 
     /// <summary>
     /// Flag set once the consumer was destroyed.
@@ -58,17 +63,9 @@ public class ResourceConsumer: ITurnExecutor, IResourceConsumer
     /// </summary>
     public bool IsSatisfied => AmountConsumed >= RequiredAmount;
 
-    /// <summary>
-    /// Class constructor.
-    /// </summary>
-    /// <param name="requiredResourceType">The required <see cref="ResourceType"/> for this consumer.</param>
-    /// <param name="requiredAmount">The required amount of resources for every <see cref="consumptionDelay"/> turns.</param>
-    /// <param name="consumptionDelay">The number of turns waited before the resources are consumed.</param>
-    public ResourceConsumer(ResourceType requiredResourceType, int requiredAmount, int consumptionDelay)
+    public ResourceConsumer(ResourceConsumerParameters parameters)
     {
-        RequiredResourceType = requiredResourceType;
-        RequiredAmount = requiredAmount;
-        ConsumptionDelay = consumptionDelay;
+        Parameters = parameters;
         IsDestroyed = false;
 
         // Make sure that the consumer is re-initialized.
@@ -128,5 +125,10 @@ public class ResourceConsumer: ITurnExecutor, IResourceConsumer
     {
         TurnsLeft = ConsumptionDelay;
         AmountConsumed = 0;
+    }
+
+    public static IEnumerable<ResourceConsumer> CreateConsumers(ResourceConsumerParameters[] consumerParameters)
+    {
+        return consumerParameters.Select(parameters => new ResourceConsumer(parameters));
     }
 }
