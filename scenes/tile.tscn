@@ -1,23 +1,27 @@
-[gd_scene load_steps=6 format=3 uid="uid://rxgdwersj5"]
+[gd_scene load_steps=8 format=3 uid="uid://rxgdwersj5"]
 
 [ext_resource type="Script" path="res://scripts/view/ViewTile.cs" id="1_3u64w"]
 [ext_resource type="Texture2D" uid="uid://bn0x3axnotkn3" path="res://ressources/arrières-plans.png" id="2_anqcc"]
 [ext_resource type="PackedScene" uid="uid://b67hdfc1n3vvx" path="res://scenes/path.tscn" id="2_qte14"]
 [ext_resource type="Texture2D" uid="uid://vhwsapm0c5i3" path="res://ressources/bâtiments.png" id="3_m4wcu"]
+[ext_resource type="PackedScene" uid="uid://cmnqsgm244xq0" path="res://scenes/ui/input_state.tscn" id="4_d72hx"]
+[ext_resource type="PackedScene" uid="uid://dsnfkdejxlv45" path="res://scenes/ui/output_state.tscn" id="5_qwxd8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r84na"]
 atlas = ExtResource("2_anqcc")
 region = Rect2(0, 0, 400, 400)
 
-[node name="Tile" type="Node2D" node_paths=PackedStringArray("Background", "BuildingSprite")]
+[node name="Tile" type="Node2D" node_paths=PackedStringArray("Background", "BuildingSprite", "OutputTurnCounter", "InputTurnCounter")]
 script = ExtResource("1_3u64w")
-Background = NodePath("Hex")
-BuildingSprite = NodePath("Sprite2D")
+Background = NodePath("Background")
+BuildingSprite = NodePath("Building Sprite")
 PathScene = ExtResource("2_qte14")
 PathPreviewColor = Color(0.360784, 0, 0, 0.780392)
 BuildingDestroyedColor = Color(0.243137, 0, 0, 0.898039)
+OutputTurnCounter = NodePath("UI Root/Output State")
+InputTurnCounter = NodePath("UI Root/Input State")
 
-[node name="Hex" type="Polygon2D" parent="."]
+[node name="Background" type="Polygon2D" parent="."]
 position = Vector2(0, -1)
 rotation = -0.000178278
 texture = SubResource("AtlasTexture_r84na")
@@ -26,20 +30,54 @@ texture_scale = Vector2(200, 200)
 polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
 uv = PackedVector2Array(0.5, 1, 1, 0.87, 1, 0.37, 0.5, 0, 0, 0.37, 0, 0.87)
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Mouse Overlap Area" type="Area2D" parent="."]
 visible = false
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+[node name="Collision Hex" type="CollisionPolygon2D" parent="Mouse Overlap Area"]
 polygon = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
 
-[node name="Line2D" type="Line2D" parent="."]
+[node name="Border" type="Line2D" parent="."]
 points = PackedVector2Array(0, 100, 87, 50, 87, -50, 0, -100, -87, -50, -87, 50)
 closed = true
 width = 5.0
 default_color = Color(0.302781, 0, 0.0713638, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Building Sprite" type="Sprite2D" parent="."]
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("3_m4wcu")
 region_enabled = true
 region_rect = Rect2(830, 450, 340, 320)
+
+[node name="UI Root" type="Control" parent="."]
+custom_minimum_size = Vector2(174, 200)
+layout_mode = 3
+anchors_preset = 0
+offset_left = -87.0
+offset_top = -100.0
+offset_right = 87.0
+offset_bottom = 100.0
+
+[node name="Input State" parent="UI Root" instance=ExtResource("4_d72hx")]
+layout_mode = 0
+anchors_preset = 0
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_left = 5.0
+offset_top = 65.0
+offset_right = 45.0
+offset_bottom = 135.0
+grow_vertical = 1
+
+[node name="Output State" parent="UI Root" instance=ExtResource("5_qwxd8")]
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 129.0
+offset_top = 65.0
+offset_right = 169.0
+offset_bottom = 135.0
+grow_horizontal = 1
+grow_vertical = 1

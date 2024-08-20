@@ -168,7 +168,10 @@ public partial class Tile: GodotObject, ITurnExecutor
             return;
         }
 
-        Building.Consume(resourceType);
+        if (Building.Consume(resourceType))
+        {
+            EmitSignal(SignalName.OnModelUpdate);
+        }
     }
 
     /// <inheritdoc cref="building.Building.AssignPath"/>
@@ -194,16 +197,15 @@ public partial class Tile: GodotObject, ITurnExecutor
     {
         return Building?.ProducePackage();
     }
-    
+
     /// <inheritdoc cref="ITurnExecutor.EndTurn"/>
     public void EndTurn()
     {
         if (!HasBuilding()) return;
         if (Building.IsDestroyed) return;
-        
-        Building.EndTurn();
 
-        if (Building.IsDestroyed) EmitSignal(SignalName.OnModelUpdate);
+        Building.EndTurn();
+        EmitSignal(SignalName.OnModelUpdate);
     }
 
     private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom)
@@ -274,7 +276,7 @@ public partial class Tile: GodotObject, ITurnExecutor
 
                 int currentGScore = gScores.ContainsKey(current) ? gScores[current] : int.MaxValue;
                 int neighborGScore = gScores.ContainsKey(neighbor) ? gScores[neighbor] : int.MaxValue;
-                int tentativeGScore = (currentGScore + crossingCost);
+                int tentativeGScore = currentGScore + crossingCost;
                 if (tentativeGScore < neighborGScore)
                 {
                     cameFrom[neighbor] = current;

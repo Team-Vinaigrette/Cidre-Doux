@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://dsnfkdejxlv45"]
+
+[ext_resource type="Texture2D" uid="uid://cn4frdy7mlnr7" path="res://ressources/ui/tile/clock-regular.svg" id="1_iyrqe"]
+[ext_resource type="Theme" uid="uid://cc4uhsggkoy4f" path="res://ui/default_theme.tres" id="1_xf6g7"]
+[ext_resource type="Script" path="res://scripts/view/ui/TurnCounter.cs" id="2_auqiu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_vbr1f"]
+line_spacing = 0.0
+font_size = 32
+font_color = Color(0, 0.329412, 0.576471, 1)
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 0
+
+[node name="Output State" type="Panel" node_paths=PackedStringArray("Counter")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = -35.0
+offset_right = -5.0
+offset_bottom = 35.0
+grow_horizontal = 0
+grow_vertical = 2
+pivot_offset = Vector2(40, 35)
+theme = ExtResource("1_xf6g7")
+theme_type_variation = &"TurnPanel"
+script = ExtResource("2_auqiu")
+Counter = NodePath("Counter")
+
+[node name="Turn Indicator" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -10.0
+offset_top = 5.0
+offset_right = 10.0
+offset_bottom = 25.0
+grow_horizontal = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+texture = ExtResource("1_iyrqe")
+expand_mode = 5
+
+[node name="Counter" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -45.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "1
+"
+label_settings = SubResource("LabelSettings_vbr1f")
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
